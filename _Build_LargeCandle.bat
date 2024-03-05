@@ -7,13 +7,13 @@ set ProjectName=LargeCandle3D.exe
 
 set BinPath=Bin\
 set BuildPath=Builds\
-set SourcePath=Source\LC3\
+set SourcePath=Source\LC3
 set LibPath=Lib\
 
 set Compiler=g++
-set CompilerFlags=-std=c++17 -Wall -Wextra -Wpedantic -I %SourcePath%
+set CompilerFlags=-std=c++17 -Wall -Wextra -Wpedantic -I Source\ -O3 -ggdb
 
-set LinkerFlags=-L.
+set LinkerFlags=-L Lib\ -lglfw3dll -lglad -lopengl32
 
 for /R %SourcePath% %%X in (*.c *.cpp) do (
   set File=%%~X
