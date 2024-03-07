@@ -7,19 +7,20 @@ static void GlfwKeyCallback(GLFWwindow* pWindow, i32 keyCode, i32 scancode, i32 
 {
   Application* pApp = (Application*)glfwGetWindowUserPointer(pWindow);
 
-  if (pApp)
+  if (!(pApp && pApp->pMouseHandler))
+      return;
+
+  if (action == GLFW_PRESS)
   {
-    if (action == GLFW_PRESS)
-    {
-      if (pApp->pKeyboardHandler)
-        pApp->pKeyboardHandler->VOnKeyDown(keyCode);
-    }
-    else
-    if (action == GLFW_RELEASE)
-    {
-      if (pApp->pKeyboardHandler)
-        pApp->pKeyboardHandler->VOnKeyUp(keyCode);
-    }
+    if (keyCode == GLFW_KEY_ESCAPE)
+      glfwSetWindowShouldClose(pWindow, GLFW_TRUE);
+
+    pApp->pKeyboardHandler->VOnKeyDown(keyCode);
+  }
+  else
+  if (action == GLFW_RELEASE)
+  {
+    pApp->pKeyboardHandler->VOnKeyUp(keyCode);
   }
 }
 
@@ -27,35 +28,30 @@ static void GlfwMouseMoveCallback(GLFWwindow *pWindow, f64 x, f64 y)
 {
   Application* pApp = (Application*)glfwGetWindowUserPointer(pWindow);
 
-  if (pApp)
-  {
-    if (pApp->pMouseHandler)
-      pApp->pMouseHandler->VOnMouseMove((f32)x, (f32)y);
-  }
+  if (!(pApp && pApp->pMouseHandler))
+      return;
+
+  pApp->pMouseHandler->VOnMouseMove((f32)x, (f32)y);
 }
 
 static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 buttonCode, i32 action, i32 mods)
 {
   Application* pApp = (Application*)glfwGetWindowUserPointer(pWindow);
 
-  if (pApp)
+  if (!(pApp && pApp->pMouseHandler))
+    return;
+
+  if (action == GLFW_PRESS)
+    pApp->pMouseHandler->VOnMouseButtonDown(buttonCode);
+  else
+  if (action == GLFW_RELEASE)
   {
-    if (action == GLFW_PRESS)
-    {
-      if (pApp->pMouseHandler)
-        pApp->pMouseHandler->VOnMouseButtonDown(buttonCode);
-    }
-    else
-    if (action == GLFW_RELEASE)
-    {
-      if (pApp->pMouseHandler)
-        pApp->pMouseHandler->VOnMouseButtonUp(buttonCode);
-    }
+    pApp->pMouseHandler->VOnMouseButtonUp(buttonCode);
   }
 }
 
 //-----------------------------------------------
-//    Impl. of class Application
+//    Impl. of Application class
 //-----------------------------------------------
 Application::Application()
 {
@@ -85,6 +81,8 @@ bool Application::Initialize(int width, int height, const char* title)
   glfwSetCursorPosCallback(m_pWindow, GlfwMouseMoveCallback);
   glfwSetMouseButtonCallback(m_pWindow, GlfwMouseButtonCallback);
 
+  glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   glfwMakeContextCurrent(m_pWindow);
 
   if (!gladLoadGL())
@@ -94,10 +92,6 @@ bool Application::Initialize(int width, int height, const char* title)
 
   glfwSwapInterval(0);
 
-  pKeyboardHandler = &m_MovementController;
-  pMouseHandler = &m_MovementController;
-
-  //
   const char* vertShaderSource =
   {
     "#version 460 core\n"
@@ -155,12 +149,10 @@ bool Application::Initialize(int width, int height, const char* title)
   glVertexArrayAttribFormat(m_QuadVAO, 0, 3, GL_FLOAT, GL_FALSE, sizeof(f32) * 0);
   glVertexArrayAttribBinding(m_QuadVAO, 0, 0);
 
-  m_Proj = glm::perspective(glm::radians(45.0f), ((f32)width / (f32)height), 0.001f, 1000.0f);
-
-  m_Pos = glm::vec3(0.0f, 0.0f,   3.0f);
-  m_Dir = glm::vec3(0.0f, 0.0f,  -1.0f);
-
-  m_View = glm::lookAt(m_Pos, (m_Pos + m_Dir), glm::vec3(0.0f, 1.0f, 0.0f));
+  m_Camera = new Camera(width, height);
+  m_CameraController = new CameraController(*m_Camera);
+  pKeyboardHandler = m_CameraController;
+  pMouseHandler = m_CameraController;
 
   m_Mod = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -184,16 +176,27 @@ void Application::Shutdown()
 
 void Application::Run()
 {
+  f32 previousTime = (f32)glfwGetTime();
+
   while (!glfwWindowShouldClose(m_pWindow))
   {
+    f32 currentTime = (f32)glfwGetTime();
+    f32 deltaTime = currentTime - previousTime;
+    previousTime = currentTime;
+
+    if (deltaTime > 0.05f)
+      deltaTime = 0.05f;
+
     glfwPollEvents();
+
+    m_CameraController->OnUpdate(deltaTime);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_Shader->Use();
-    m_Shader->SetUniformMat4x4("u_Projection", m_Proj);
-    m_Shader->SetUniformMat4x4("u_View", m_View);
+    m_Shader->SetUniformMat4x4("u_Projection", m_Camera->GetProjection());
+    m_Shader->SetUniformMat4x4("u_View", m_Camera->GetView());
 
     m_Shader->SetUniformMat4x4("u_Model", m_Mod);
 
