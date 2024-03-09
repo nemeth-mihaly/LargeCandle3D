@@ -58,6 +58,18 @@ void Camera::MoveRight()
   m_bIsMoved = true;
 }
 
+void Camera::MoveUp()
+{
+  Direction += g_Up;
+  m_bIsMoved = true;
+}
+
+void Camera::MoveDown()
+{
+  Direction += -g_Up;
+  m_bIsMoved = true;  
+}
+
 void Camera::Rotate(f32 yaw, f32 pitch)
 {
   glm::quat q = glm::normalize(glm::cross(glm::angleAxis(-pitch, Right), 

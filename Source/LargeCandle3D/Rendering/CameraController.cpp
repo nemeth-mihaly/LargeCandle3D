@@ -1,6 +1,10 @@
 #include "LargeCandle3D/Applv/Application.h"
 #include "LargeCandle3D/Rendering/CameraController.h"
 
+//-----------------------------------------------
+//    Impl. of CameraController class
+//-----------------------------------------------
+
 CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
   : m_pCamera(pCamera)
 {
@@ -29,6 +33,15 @@ void CameraController::OnUpdate(f32 deltaTime)
   if (m_bKeysDown[GLFW_KEY_D])
   {
     m_pCamera->MoveRight();
+  }
+
+  // Up/Down
+  if (m_bKeysDown[GLFW_KEY_LEFT_SHIFT])
+    m_pCamera->MoveUp();
+  else
+  if (m_bKeysDown[GLFW_KEY_LEFT_CONTROL])
+  {
+    m_pCamera->MoveDown();
   }
 
   // Mouse Movement

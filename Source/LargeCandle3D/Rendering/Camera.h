@@ -27,6 +27,8 @@ class Camera
     void MoveBackward();
     void MoveLeft();
     void MoveRight();
+    void MoveUp();
+    void MoveDown();
 
     void Rotate(f32 yaw, f32 pitch);
 

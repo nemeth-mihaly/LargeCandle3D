@@ -2,6 +2,39 @@
 
 Application* g_pApp = nullptr;
 
+static char* ReadShaderFile(const char* name)
+{
+  FILE* fp = fopen(name, "rb");
+
+  if (!fp)
+    return nullptr;
+
+  fseek(fp, 0L, SEEK_END);
+  size_t size = ftell(fp);
+  rewind(fp);
+
+  char* data = new char[size + 1];
+
+  if (!data)
+  {
+    fclose(fp);
+    return nullptr;
+  }
+
+  if (fread(data, sizeof(char), size, fp) < size)
+  {
+    delete[] data;
+    fclose(fp);
+
+    return nullptr;
+  }
+
+  data[size] = '\0';
+  fclose(fp);
+  
+  return data;
+}
+
 //-----------------------------------------------
 //    GLFW specific event callbacks
 //-----------------------------------------------
@@ -103,62 +136,32 @@ bool Application::Initialize(int width, int height, const char* title)
 
   glfwSwapInterval(0);
 
-  const char* vertShaderSource =
-  {
-    "#version 460 core\n"
-    
-    "in layout(location = 0) vec3 a_Pos;"
+  char* vertShaderSource = ReadShaderFile("Data\\Shaders\\Shader.vert.glsl");
+  char* fragShaderSource = ReadShaderFile("Data\\Shaders\\Shader.frag.glsl");
 
-    "uniform mat4 u_Projection, u_View, u_Model;"
-
-    "void main()"
-    "{"
-    "gl_Position = u_Projection * u_View * u_Model * vec4(a_Pos, 1.0);"
-    "}"
-  };
-
-  const char* fragShaderSource =
-  {
-    "#version 460 core\n"
-    
-    "out vec4 v_FragColor;"
-
-    "void main()"
-    "{"
-    "v_FragColor = vec4(1.0, 0.0, 1.0, 1.0);"
-    "}"
-  };
+  if (!(vertShaderSource && fragShaderSource))
+    return false;
 
   m_Shader = new Shader(vertShaderSource, fragShaderSource);
 
-  m_QuadVertices = 
-  {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.5f,  0.5f, 0.0f,
-    -0.5f,  0.5f, 0.0f,
-  };
+  delete[] vertShaderSource;
+  delete[] fragShaderSource;
 
-  m_QuadIndices =
-  {
-    0, 1, 2,
-    2, 3, 0,
-  };
+//  std::vector<Vertex> vertices =
+//  {
+//    Vertex({-0.5f, -0.5f, 0.0f}),
+//    Vertex({ 0.5f, -0.5f, 0.0f}),
+//    Vertex({ 0.5f,  0.5f, 0.0f}),
+//    Vertex({-0.5f,  0.5f, 0.0f}),
+//  };
+//
+//  std::vector<u32> indices =
+//  {
+//    0, 1, 2,
+//    2, 3, 0,
+//  };
 
-  glCreateBuffers(1, &m_QuadVBO);	
-  glNamedBufferData(m_QuadVBO, sizeof(f32) * m_QuadVertices.size(), m_QuadVertices.data(), GL_STATIC_DRAW);
-
-  glCreateBuffers(1, &m_QuadIBO);
-  glNamedBufferData(m_QuadIBO, sizeof(u32) * m_QuadIndices.size(), m_QuadIndices.data(), GL_STATIC_DRAW);
-
-  glCreateVertexArrays(1, &m_QuadVAO);
-
-  glVertexArrayVertexBuffer(m_QuadVAO, 0, m_QuadVBO, 0, sizeof(f32) * 3);
-  glVertexArrayElementBuffer(m_QuadVAO, m_QuadIBO);
-
-  glEnableVertexArrayAttrib(m_QuadVAO, 0);
-  glVertexArrayAttribFormat(m_QuadVAO, 0, 3, GL_FLOAT, GL_FALSE, sizeof(f32) * 0);
-  glVertexArrayAttribBinding(m_QuadVAO, 0, 0);
+  m_Mesh.reset(new Mesh(g_CubeVData));
 
   m_pCamera.reset(new Camera(width, height));
 
@@ -173,10 +176,6 @@ bool Application::Initialize(int width, int height, const char* title)
 
 void Application::Shutdown()
 {
-  glDeleteBuffers(1, &m_QuadIBO);
-  glDeleteBuffers(1, &m_QuadVBO);
-  glDeleteVertexArrays(1, &m_QuadVAO);
-
   if (m_Shader)
     delete m_Shader;
 
@@ -201,21 +200,10 @@ void Application::Run()
 
     glfwPollEvents();
 
-    m_pCamera->OnUpdate(deltaTime);
-    m_pCameraController->OnUpdate(deltaTime);
-
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    m_Shader->Use();
-    m_Shader->SetUniformMat4x4("u_Projection", m_pCamera->Projection);
-    m_Shader->SetUniformMat4x4("u_View", m_pCamera->View);
-
-    m_Shader->SetUniformMat4x4("u_Model", m_Mod);
-
-    glBindVertexArray(m_QuadVAO);
-    glDrawElements(GL_TRIANGLES, m_QuadIndices.size(), GL_UNSIGNED_INT, nullptr);
-
+    Update(deltaTime);
+    
+    Render();
+    
     glfwSwapBuffers(m_pWindow);
   }
 }
@@ -226,4 +214,24 @@ glm::vec2 Application::GetMousePos()
   glfwGetCursorPos(m_pWindow, &x, &y);
   
   return glm::vec2((f32)x, (f32)y);
+}
+
+void Application::Update(f32 deltaTime)
+{
+  m_pCamera->OnUpdate(deltaTime);
+  m_pCameraController->OnUpdate(deltaTime);
+}
+
+void Application::Render()
+{
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  m_Shader->Use();
+  m_Shader->SetUniformMat4x4("u_Projection", m_pCamera->Projection);
+  m_Shader->SetUniformMat4x4("u_View", m_pCamera->View);
+
+  m_Shader->SetUniformMat4x4("u_Model", m_Mod);
+
+  m_Mesh->OnRender();
 }

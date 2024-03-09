@@ -1,5 +1,9 @@
 #include "LargeCandle3D/Rendering/Shader.h"
 
+//-----------------------------------------------
+//    Impl. of Shader class
+//-----------------------------------------------
+
 Shader::Shader(const char* vertSource, const char* fragSource)
 {
   u32 vertShaderID = Compile(vertSource, GL_VERTEX_SHADER);

@@ -13,6 +13,7 @@
 #include "LargeCandle3D/Rendering/Shader.h"
 #include "LargeCandle3D/Rendering/Camera.h"
 #include "LargeCandle3D/Rendering/CameraController.h"
+#include "LargeCandle3D/Rendering/Mesh.h"
 
 class Application;
 extern Application* g_pApp;
@@ -23,6 +24,7 @@ class Application
     IKeyboardHandler*   pKeyboardHandler;
     IMouseHandler*      pMouseHandler;
 
+  public:
     Application();
 
     bool Initialize(int width, int height, const char* title);
@@ -33,16 +35,15 @@ class Application
     glm::vec2 GetMousePos();
 
   private:
+    void Update(f32 deltaTime);
+    void Render();
+
+  private:
     GLFWwindow*         m_pWindow;
 
     Shader*             m_Shader;
 
-    std::vector<f32>    m_QuadVertices;
-    std::vector<u32>    m_QuadIndices;
-
-    u32                 m_QuadVAO;
-    u32                 m_QuadVBO;
-    u32                 m_QuadIBO;
+    std::shared_ptr<Mesh> m_Mesh;
 
     std::shared_ptr<Camera>             m_pCamera;
     CameraController*   m_pCameraController;
