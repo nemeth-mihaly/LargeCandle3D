@@ -1,24 +1,19 @@
 #pragma once
 
-#include "LargeCandle3D/Core/PrimTypes.h"
+#include <memory>
 
-#include "LargeCandle3D/Applv/Interfaces.h"
-
+#define GLFW_INCLUDE_NONE
 #include "LargeCandle3D/Vendor/GLFW/glfw3.h"
 
-#include "LargeCandle3D/Vendor/glm/glm.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/matrix_transform.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/type_ptr.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/quaternion.hpp"
-#include "LargeCandle3D/Vendor/glm/gtx/quaternion.hpp"
-
+#include "LargeCandle3D/Applv/Interfaces.h"
+#include "LargeCandle3D/Core/PrimTypes.h"
+#include "LargeCandle3D/Rendering/Geometry.h"
 #include "LargeCandle3D/Rendering/Camera.h"
 
 class CameraController : public IKeyboardHandler, public IMouseHandler 
 {
   public:
-    CameraController();
-    CameraController(Camera& camera);
+    CameraController(const std::shared_ptr<Camera>& pCamera);
 
     void OnUpdate(f32 deltaTime);
 
@@ -30,7 +25,7 @@ class CameraController : public IKeyboardHandler, public IMouseHandler
     bool VOnMouseButtonUp(i32 buttonCode);
 
   private:
-    Camera*     m_pCamera;
+    std::shared_ptr<Camera> m_pCamera;
 
     bool        m_bKeysDown[GLFW_KEY_LAST];
 

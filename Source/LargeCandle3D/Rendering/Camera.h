@@ -1,34 +1,38 @@
 #pragma once
 
 #include "LargeCandle3D/Core/PrimTypes.h"
-
-#include "LargeCandle3D/Vendor/glm/glm.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/matrix_transform.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/type_ptr.hpp"
+#include "LargeCandle3D/Rendering/Geometry.h"
 
 class Camera
 {
   public:
-    Camera();
+    glm::vec3   Position;
+    glm::vec3   Direction;
+
+    glm::vec3   Forward;
+    glm::vec3   Right;
+
+    glm::mat4   Projection;
+    glm::mat4   View;
+
+    f32         Speed;
+    f32         RotationSpeed;
+
+  public:
     Camera(i32 width, i32 height);
 
-    const glm::mat4& GetProjection() const { return m_Projection; }
-    const glm::mat4& GetView() const { return m_View; }
+    void OnUpdate(f32 deltaTime);
 
-    void SetPosition(const glm::vec3& position) { m_Position = position; }
-    void SetForwardDirection(const glm::vec3& forwardDirection) { m_ForwardDirection = forwardDirection; }
+    void MoveForward();
+    void MoveBackward();
+    void MoveLeft();
+    void MoveRight();
 
-    const glm::vec3& GetPosition() const { return m_Position; }
-    const glm::vec3& GetForwardDirection() const { return m_ForwardDirection; }
+    void Rotate(f32 yaw, f32 pitch);
 
+  private:
     void RecalcView();
 
   private:
-    glm::mat4     m_Projection;
-    glm::mat4     m_View;
-
-    glm::vec3     m_Position;
-    glm::vec3     m_ForwardDirection;
+    bool    m_bIsMoved;
 };
-
-extern glm::vec3 g_UpDirection;

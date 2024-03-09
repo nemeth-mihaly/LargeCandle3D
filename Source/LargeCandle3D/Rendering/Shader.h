@@ -1,12 +1,9 @@
 #pragma once
 
-#include "LargeCandle3D/Core/PrimTypes.h"
-
 #include "LargeCandle3D/Vendor/glad/glad.h"
 
-#include "LargeCandle3D/Vendor/glm/glm.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/matrix_transform.hpp"
-#include "LargeCandle3D/Vendor/glm/gtc/type_ptr.hpp"
+#include "LargeCandle3D/Core/PrimTypes.h"
+#include "LargeCandle3D/Rendering/Geometry.h"
 
 class Shader
 {

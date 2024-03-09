@@ -1,86 +1,46 @@
+#include "LargeCandle3D/Applv/Application.h"
 #include "LargeCandle3D/Rendering/CameraController.h"
 
-CameraController::CameraController()
+CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
+  : m_pCamera(pCamera)
 {
-  m_pCamera = nullptr;
-}
-
-CameraController::CameraController(Camera& camera)
-{
-  m_pCamera = &camera;
-  
   memset(m_bKeysDown, 0, sizeof(m_bKeysDown));
 
-  m_MousePos = glm::vec2(0.0f, 0.0f);
-  m_PrevMousePos = glm::vec2(0.0f, 0.0f);
+  m_MousePos = g_pApp->GetMousePos();
+  m_PrevMousePos = m_MousePos;
 }
 
 void CameraController::OnUpdate(f32 deltaTime)
 {
-  glm::vec2 deltaMousePos = (m_MousePos - m_PrevMousePos) * 0.002f;
-//                                                              ^--- sensitivity
-  m_PrevMousePos = m_MousePos;
-
-  bool bIsMoved = false;
-
+  //
+  //  WASD Movement
+  //
   if (m_bKeysDown[GLFW_KEY_W])
-  {
-    glm::vec3 position = m_pCamera->GetPosition();
-    position += m_pCamera->GetForwardDirection() * deltaTime;
-
-    m_pCamera->SetPosition(position);
-
-    bIsMoved = true;
-  }
+    m_pCamera->MoveForward();
   else
   if (m_bKeysDown[GLFW_KEY_S])
   {
-    glm::vec3 position = m_pCamera->GetPosition();
-    position -= m_pCamera->GetForwardDirection() * deltaTime;
-
-    m_pCamera->SetPosition(position);
-
-    bIsMoved = true;
+    m_pCamera->MoveBackward();
   }
-
-  glm::vec3 rightDirection = glm::cross(m_pCamera->GetForwardDirection(), g_UpDirection);
 
   if (m_bKeysDown[GLFW_KEY_A])
-  {
-    glm::vec3 position = m_pCamera->GetPosition();
-    position -= rightDirection * deltaTime;
-
-    m_pCamera->SetPosition(position);
-
-    bIsMoved = true;
-  }
+    m_pCamera->MoveLeft();
   else
   if (m_bKeysDown[GLFW_KEY_D])
   {
-    glm::vec3 position = m_pCamera->GetPosition();
-    position += rightDirection * deltaTime;
-
-    m_pCamera->SetPosition(position);
-
-    bIsMoved = true;
+    m_pCamera->MoveRight();
   }
+
+  // Mouse Movement
+  glm::vec2 deltaMousePos = (m_MousePos - m_PrevMousePos) * 0.003f;
+  m_PrevMousePos = m_MousePos;
 
   if (!(deltaMousePos.x == 0.0f && deltaMousePos.y == 0.0f))
   {
-    f32 rotationSpeed = 0.3f;
-    f32 deltaPitch = deltaMousePos.y * rotationSpeed;
-    f32 deltaYaw = deltaMousePos.x * rotationSpeed;
-
-    glm::quat q = glm::normalize(glm::cross(glm::angleAxis(-deltaPitch, rightDirection), 
-      glm::angleAxis(-deltaYaw, g_UpDirection)));
-    
-    m_pCamera->SetForwardDirection(glm::rotate(q, m_pCamera->GetForwardDirection()));
-
-    bIsMoved = true;
+    f32 pitch = deltaMousePos.y * m_pCamera->RotationSpeed;
+    f32 yaw = deltaMousePos.x * m_pCamera->RotationSpeed;
+    m_pCamera->Rotate(yaw, pitch);
   }
-
-  if (bIsMoved)
-    m_pCamera->RecalcView();
 }
 
 bool CameraController::VOnKeyDown(i32 keyCode)

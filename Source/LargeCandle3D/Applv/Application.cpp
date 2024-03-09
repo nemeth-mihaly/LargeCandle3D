@@ -1,8 +1,14 @@
 #include "LargeCandle3D/Applv/Application.h"
 
+Application* g_pApp = nullptr;
+
 //-----------------------------------------------
 //    GLFW specific event callbacks
 //-----------------------------------------------
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 static void GlfwKeyCallback(GLFWwindow* pWindow, i32 keyCode, i32 scancode, i32 action, i32 mods)
 {
   Application* pApp = (Application*)glfwGetWindowUserPointer(pWindow);
@@ -50,11 +56,16 @@ static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 buttonCode, i32 act
   }
 }
 
+#pragma GCC diagnostic pop
+
 //-----------------------------------------------
 //    Impl. of Application class
 //-----------------------------------------------
+
 Application::Application()
 {
+  g_pApp = this;
+
   m_pWindow = nullptr;
 
   pKeyboardHandler = nullptr;
@@ -149,10 +160,11 @@ bool Application::Initialize(int width, int height, const char* title)
   glVertexArrayAttribFormat(m_QuadVAO, 0, 3, GL_FLOAT, GL_FALSE, sizeof(f32) * 0);
   glVertexArrayAttribBinding(m_QuadVAO, 0, 0);
 
-  m_Camera = new Camera(width, height);
-  m_CameraController = new CameraController(*m_Camera);
-  pKeyboardHandler = m_CameraController;
-  pMouseHandler = m_CameraController;
+  m_pCamera.reset(new Camera(width, height));
+
+  m_pCameraController = new CameraController(m_pCamera);
+  pKeyboardHandler = m_pCameraController;
+  pMouseHandler = m_pCameraController;
 
   m_Mod = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -189,14 +201,15 @@ void Application::Run()
 
     glfwPollEvents();
 
-    m_CameraController->OnUpdate(deltaTime);
+    m_pCamera->OnUpdate(deltaTime);
+    m_pCameraController->OnUpdate(deltaTime);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_Shader->Use();
-    m_Shader->SetUniformMat4x4("u_Projection", m_Camera->GetProjection());
-    m_Shader->SetUniformMat4x4("u_View", m_Camera->GetView());
+    m_Shader->SetUniformMat4x4("u_Projection", m_pCamera->Projection);
+    m_Shader->SetUniformMat4x4("u_View", m_pCamera->View);
 
     m_Shader->SetUniformMat4x4("u_Model", m_Mod);
 
@@ -205,4 +218,12 @@ void Application::Run()
 
     glfwSwapBuffers(m_pWindow);
   }
+}
+
+glm::vec2 Application::GetMousePos()
+{
+  f64 x, y;
+  glfwGetCursorPos(m_pWindow, &x, &y);
+  
+  return glm::vec2((f32)x, (f32)y);
 }
