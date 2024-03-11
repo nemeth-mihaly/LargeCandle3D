@@ -3,7 +3,16 @@
 #include "LargeCandle3D/Vendor/glad/glad.h"
 
 #include "LargeCandle3D/Core/PrimTypes.h"
-#include "LargeCandle3D/Rendering/Geometry.h"
+
+#include "LargeCandle3D/Graphics/Geometry.h"
+
+//-----------------------------------------------
+//
+//-----------------------------------------------
+
+//
+// class Shader
+//
 
 class Shader
 {
@@ -19,5 +28,5 @@ class Shader
     u32 Compile(const char* source, u32 type) const;
 
   private:
-    u32     m_ProgramID;
+    u32 m_ProgramID;
 };

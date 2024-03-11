@@ -1,4 +1,4 @@
-#include "LargeCandle3D/Rendering/Shader.h"
+#include "LargeCandle3D/Graphics/Shader.h"
 
 //-----------------------------------------------
 //    Impl. of Shader class

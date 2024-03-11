@@ -1,5 +1,6 @@
+#include "LargeCandle3D/Graphics/CameraController.h"
+
 #include "LargeCandle3D/Applv/Application.h"
-#include "LargeCandle3D/Rendering/CameraController.h"
 
 //-----------------------------------------------
 //    Impl. of CameraController class
@@ -16,9 +17,6 @@ CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
 
 void CameraController::OnUpdate(f32 deltaTime)
 {
-  //
-  //  WASD Movement
-  //
   if (m_bKeysDown[GLFW_KEY_W])
     m_pCamera->MoveForward();
   else
@@ -35,7 +33,6 @@ void CameraController::OnUpdate(f32 deltaTime)
     m_pCamera->MoveRight();
   }
 
-  // Up/Down
   if (m_bKeysDown[GLFW_KEY_LEFT_SHIFT])
     m_pCamera->MoveUp();
   else
@@ -44,34 +41,33 @@ void CameraController::OnUpdate(f32 deltaTime)
     m_pCamera->MoveDown();
   }
 
-  // Mouse Movement
   glm::vec2 deltaMousePos = (m_MousePos - m_PrevMousePos) * 0.003f;
   m_PrevMousePos = m_MousePos;
 
   if (!(deltaMousePos.x == 0.0f && deltaMousePos.y == 0.0f))
   {
-    f32 pitch = deltaMousePos.y * m_pCamera->RotationSpeed;
-    f32 yaw = deltaMousePos.x * m_pCamera->RotationSpeed;
+    f32 pitch = deltaMousePos.y * m_pCamera->m_RotationSpeed;
+    f32 yaw = deltaMousePos.x * m_pCamera->m_RotationSpeed;
     m_pCamera->Rotate(yaw, pitch);
   }
 }
 
-bool CameraController::VOnKeyDown(i32 keyCode)
+bool CameraController::VOnKeyDown(i32 key)
 {
-  if (!(0 <= keyCode && keyCode <= GLFW_KEY_LAST))
+  if (!(0 <= key && key <= GLFW_KEY_LAST))
     return false;
 
-  m_bKeysDown[keyCode] = true;
+  m_bKeysDown[key] = true;
 
   return true;
 }
 
-bool CameraController::VOnKeyUp(i32 keyCode)
+bool CameraController::VOnKeyUp(i32 key)
 {
-  if (!(0 <= keyCode && keyCode <= GLFW_KEY_LAST))
+  if (!(0 <= key && key <= GLFW_KEY_LAST))
     return false;
 
-  m_bKeysDown[keyCode] = false;
+  m_bKeysDown[key] = false;
 
   return true;
 }
@@ -82,12 +78,12 @@ bool CameraController::VOnMouseMove(f32 x, f32 y)
   return true;
 }
 
-bool CameraController::VOnMouseButtonDown(i32 buttonCode)
+bool CameraController::VOnMouseButtonDown(i32 button)
 {
   return true;
 }
 
-bool CameraController::VOnMouseButtonUp(i32 buttonCode)
+bool CameraController::VOnMouseButtonUp(i32 button)
 {
   return true;
 }

@@ -1,6 +1,6 @@
-#include "LargeCandle3D/Rendering/Mesh.h"
+#include "LargeCandle3D/Graphics/Mesh.h"
 
-std::vector<Vertex> g_CubeVData =
+std::vector<Vertex3D> g_CubeVertices =
 {
   {{ -0.5f, -0.5f, -0.5f }},
   {{  0.5f, -0.5f, -0.5f }},
@@ -49,38 +49,38 @@ std::vector<Vertex> g_CubeVData =
 //    Impl. of Mesh class
 //-----------------------------------------------
 
-Mesh::Mesh(const std::vector<Vertex>& vertices)
-  : m_VData(vertices)
+Mesh::Mesh(const std::vector<Vertex3D>& vertices)
+  : m_Vertices(vertices)
 {
   m_bIsBufferTypeIndex = false;
 
   glCreateBuffers(1, &m_VBO);	
-  glNamedBufferData(m_VBO, sizeof(Vertex) * m_VData.size(), m_VData.data(), GL_STATIC_DRAW);
+  glNamedBufferData(m_VBO, sizeof(Vertex3D) * m_Vertices.size(), m_Vertices.data(), GL_STATIC_DRAW);
 
   glCreateVertexArrays(1, &m_VAO);
 
-  glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, sizeof(Vertex));
+  glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, sizeof(Vertex3D));
 
   glEnableVertexArrayAttrib(m_VAO, 0);
   glVertexArrayAttribFormat(m_VAO, 0, 3, GL_FLOAT, GL_FALSE, sizeof(f32) * 0);
   glVertexArrayAttribBinding(m_VAO, 0, 0);
 }
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, 
+Mesh::Mesh(const std::vector<Vertex3D>& vertices, 
   const std::vector<u32>& indices)
-    : m_VData(vertices), m_IData(indices)
+    : m_Vertices(vertices), m_Indices(indices)
 {
   m_bIsBufferTypeIndex = true;
 
   glCreateBuffers(1, &m_VBO);	
-  glNamedBufferData(m_VBO, sizeof(Vertex) * m_VData.size(), m_VData.data(), GL_STATIC_DRAW);
+  glNamedBufferData(m_VBO, sizeof(Vertex3D) * m_Vertices.size(), m_Vertices.data(), GL_STATIC_DRAW);
 
   glCreateBuffers(1, &m_IBO);
-  glNamedBufferData(m_IBO, sizeof(u32) * m_IData.size(), m_IData.data(), GL_STATIC_DRAW);
+  glNamedBufferData(m_IBO, sizeof(u32) * m_Indices.size(), m_Indices.data(), GL_STATIC_DRAW);
 
   glCreateVertexArrays(1, &m_VAO);
 
-  glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, sizeof(Vertex));
+  glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, sizeof(Vertex3D));
   glVertexArrayElementBuffer(m_VAO, m_IBO);
 
   glEnableVertexArrayAttrib(m_VAO, 0);
@@ -102,9 +102,9 @@ void Mesh::OnRender() const
   glBindVertexArray(m_VAO);
  
   if (!m_bIsBufferTypeIndex)
-    glDrawArrays(GL_TRIANGLES, 0, m_VData.size());
+    glDrawArrays(GL_TRIANGLES, 0, m_Vertices.size());
   else
   {
-    glDrawElements(GL_TRIANGLES, m_IData.size(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, nullptr);
   }
 }
