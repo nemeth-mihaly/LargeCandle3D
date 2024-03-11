@@ -1,7 +1,6 @@
 #include "LargeCandle3D/Applv/Application.h"
 
 Application* g_pApp = NULL;
-
 Shader* g_pShader = NULL;
 
 //
@@ -127,14 +126,17 @@ Application::~Application()
 {
 }
 
-bool Application::Initialize(int width, int height, const char* title)
+bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 {
   if (!glfwInit())
     return false;
 
   glfwDefaultWindowHints();
 
-  m_pWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);
+  m_pWindow = glfwCreateWindow(scrWidth, scrHeight, title, nullptr, nullptr);
+
+  m_ScrWidth = scrWidth;
+  m_ScrHeight = scrHeight;
 
   if (!m_pWindow)
     return false;
@@ -167,35 +169,25 @@ bool Application::Initialize(int width, int height, const char* title)
   delete[] vertShaderSource;
   delete[] fragShaderSource;
 
-  m_pMesh.reset(new Mesh(g_CubeVertices));
+  pMesh.reset(new Mesh(g_CubeVertices));
 
-  m_pCamera.reset(new Camera(width, height));
+  m_pScene.reset(new Scene());
+
+  m_pCamera.reset(new Camera(scrWidth, scrHeight));
+  m_pScene->pCamera = m_pCamera;
 
   m_pCameraController = new CameraController(m_pCamera);
   pKeyboardHandler = m_pCameraController;
   pMouseHandler = m_pCameraController;
-
-  m_pRootSceneNode = new SceneNode();
-
-  m_pSceneMeshNodeA = new SceneMeshNode(m_pMesh);
-  m_pSceneMeshNodeA->Position = glm::vec3(-5.0f, 0.0f, 0.0f);
-
-  m_pSceneMeshNodeB = new SceneMeshNode(m_pMesh);
-  m_pSceneMeshNodeB->Position = glm::vec3(5.0f, 0.0f, 0.0f);
-
-  m_pSceneMeshNodeA->VAddChild(std::shared_ptr<ISceneNode>(m_pSceneMeshNodeB));
-
-  m_pSceneMeshNodeC = new SceneMeshNode(m_pMesh);
-  m_pSceneMeshNodeC->Position = glm::vec3(5.0f, 0.0f, 0.0f);
-
-  m_pRootSceneNode->VAddChild(std::shared_ptr<ISceneNode>(m_pSceneMeshNodeA));
-  m_pRootSceneNode->VAddChild(std::shared_ptr<ISceneNode>(m_pSceneMeshNodeC));
 
   return true;
 }
 
 void Application::Shutdown()
 {
+  if (m_pCameraController)
+    delete m_pCameraController;
+
   if (g_pShader)
     delete g_pShader;
 
@@ -235,22 +227,6 @@ glm::vec2 Application::GetMousePos()
 
 void Application::Update(f32 deltaTime)
 {
-  if (glfwGetKey(m_pWindow, GLFW_KEY_UP))
-    m_pSceneMeshNodeA->Position.z -= 1.0f * deltaTime;
-  else
-  if (glfwGetKey(m_pWindow, GLFW_KEY_DOWN))
-  {
-    m_pSceneMeshNodeA->Position.z += 1.0f * deltaTime;
-  }
-
-  if (glfwGetKey(m_pWindow, GLFW_KEY_LEFT))
-    m_pSceneMeshNodeA->Position.x -= 1.0f * deltaTime;
-  else
-  if (glfwGetKey(m_pWindow, GLFW_KEY_RIGHT))
-  {
-    m_pSceneMeshNodeA->Position.x += 1.0f * deltaTime;
-  }
-
   m_pCamera->OnUpdate(deltaTime);
   m_pCameraController->OnUpdate(deltaTime);
 }
@@ -260,12 +236,7 @@ void Application::Render()
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  g_pShader->Use();
-  g_pShader->SetUniformMat4x4("u_Projection", m_pCamera->GetProjection());
-  g_pShader->SetUniformMat4x4("u_View", m_pCamera->GetView());
-
-  // m_pRootSceneNode->VRender(); // Does nothing.
-  m_pRootSceneNode->VRenderChild();
+  m_pScene->OnRender();
 
   glfwSwapBuffers(m_pWindow);
 }

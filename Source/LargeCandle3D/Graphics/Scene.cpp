@@ -3,75 +3,46 @@
 #include "LargeCandle3D/Applv/Application.h"
 
 //-----------------------------------------------
-//    Impl. of SceneNode class
+//    Impl. of Scene class
 //-----------------------------------------------
 
-SceneNode::SceneNode()
+Scene::Scene()
 {
-  Transform = glm::mat4(1.0f);
+  m_pRoot.reset(new SceneNode());
+
+    m_pNodeA.reset(new SceneMeshNode(g_pApp->pMesh));
+    m_pNodeA->Position = glm::vec3(-5.0f, 0.0f, 0.0f);
+
+    m_pRoot->VAddChild(m_pNodeA);
+
+      m_pNodeB.reset(new SceneMeshNode(g_pApp->pMesh));
+      m_pNodeB->Position = glm::vec3(5.0f, 0.0f, 0.0f);
+
+      m_pNodeA->VAddChild(m_pNodeB);
+
+    m_pNodeC.reset(new SceneMeshNode(g_pApp->pMesh)); 
+    m_pNodeC->Position = glm::vec3(5.0f, 0.0f, 0.0f);
+
+    m_pRoot->VAddChild(m_pNodeC);
 }
 
-SceneNode::~SceneNode()
+Scene::~Scene()
 {
 }
 
-void SceneNode::VPreRender()
+void Scene::OnRender()
 {
-}
-
-void SceneNode::VRender()
-{
-}
-
-void SceneNode::VRenderChild()
-{
-  for (usize i = 0; i < m_Childs.size(); i++)
+  if (m_pRoot && pCamera)
   {
-    auto child = m_Childs[i];
+    g_pShader->Use();
+    g_pShader->SetUniformMat4x4("u_Projection", pCamera->GetProjection());
+    g_pShader->SetUniformMat4x4("u_View", pCamera->GetView());
 
-    child->VPreRender();
+    m_pRoot->VPreRender();
 
-      child->VRender();
-      child->VRenderChild();
+      m_pRoot->VRender();
+      m_pRoot->VRenderChild();
 
-    child->VPostRender();
+    m_pRoot->VPostRender();
   }
-}
-
-void SceneNode::VPostRender()
-{
-}
-
-void SceneNode::VAddChild(const std::shared_ptr<ISceneNode>& pChild)
-{
-  m_Childs.push_back(pChild);
-  std::static_pointer_cast<SceneNode>(pChild)->m_pParent = this;
-}
-
-void SceneNode::VRemoveChild()
-{
-}
-
-//-----------------------------------------------
-//    Impl. of SceneMeshNode class
-//-----------------------------------------------
-
-SceneMeshNode::SceneMeshNode(const std::shared_ptr<Mesh>& pMesh)
-  : m_pMesh(pMesh)
-{
-  Position = glm::vec3(0.0f, 0.0f, 0.0f);
-}
-
-SceneMeshNode::~SceneMeshNode()
-{
-}
-
-void SceneMeshNode::VRender()
-{
-  Transform = glm::translate(glm::mat4(1.0f), Position);
-  Transform *= m_pParent->Transform;
-
-  g_pShader->SetUniformMat4x4("u_Model", Transform);
-
-  m_pMesh->OnRender();
 }
