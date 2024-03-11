@@ -13,7 +13,12 @@ SceneNode::SceneNode()
   m_pParent = NULL;
 
   Position = glm::vec3(0.0f, 0.0f, 0.0f);
+  Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
   Transform = glm::mat4(1.0f);
+
+  bIsLightSource = false;
+  Color = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 SceneNode::~SceneNode()
@@ -22,12 +27,16 @@ SceneNode::~SceneNode()
 
 void SceneNode::VPreRender()
 {
-  Transform = glm::translate(glm::mat4(1.0f), Position);
+  Transform = glm::translate(glm::mat4(1.0f), Position)
+    * glm::scale(glm::mat4(1.0f), Scale);
 
   if (m_pParent)
     Transform *= m_pParent->Transform;
 
   g_pShader->SetUniformMat4x4("u_Model", Transform);
+
+  g_pShader->SetUniformBool("u_bIsLightSource", bIsLightSource);
+  g_pShader->SetUniform3f("u_ObjectColor", Color);
 }
 
 void SceneNode::VRender()

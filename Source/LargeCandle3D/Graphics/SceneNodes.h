@@ -42,7 +42,12 @@ class SceneNode : public ISceneNode
 
   public:
     glm::vec3 Position;
+    glm::vec3 Scale;
+
     glm::mat4 Transform;
+
+    bool bIsLightSource;
+    glm::vec3 Color;
 
     SceneNode();
     virtual ~SceneNode();

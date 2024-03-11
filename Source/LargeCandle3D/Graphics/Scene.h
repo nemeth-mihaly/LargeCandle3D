@@ -31,5 +31,5 @@ class Scene
 
     std::shared_ptr<SceneMeshNode> m_pNodeA;
     std::shared_ptr<SceneMeshNode> m_pNodeB;
-    std::shared_ptr<SceneMeshNode> m_pNodeC;
+    std::shared_ptr<SceneMeshNode> m_pNodeC; // Light Source
 };

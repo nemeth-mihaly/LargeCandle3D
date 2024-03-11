@@ -22,6 +22,8 @@ class Shader
 
     void Use() const;
 
+    void SetUniformBool(const char* name, bool value) const;
+    void SetUniform3f(const char* name, const glm::vec3& values) const;
     void SetUniformMat4x4(const char* name, const glm::mat4& mat4x4) const;
 
   private:

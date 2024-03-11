@@ -30,6 +30,18 @@ void Shader::Use() const
   glUseProgram(m_ProgramID);
 }
 
+void Shader::SetUniformBool(const char* name, bool value) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform1i(uniformLocation, static_cast<i32>(value));
+}
+
+void Shader::SetUniform3f(const char* name, const glm::vec3& values) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform3f(uniformLocation, values.x, values.y, values.z);
+}
+
 void Shader::SetUniformMat4x4(const char* name, const glm::mat4& mat4x4) const
 {
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);

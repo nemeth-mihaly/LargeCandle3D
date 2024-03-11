@@ -31,6 +31,8 @@ class Camera
 
     void Rotate(f32 yaw, f32 pitch);
 
+    const glm::vec3& GetPosition() const { return m_Position; }
+
     const glm::mat4& GetView() const { return m_View; }
     const glm::mat4& GetProjection() const { return m_Projection; }
 

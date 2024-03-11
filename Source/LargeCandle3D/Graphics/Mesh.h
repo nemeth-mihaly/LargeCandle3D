@@ -27,9 +27,10 @@ extern std::vector<Vertex3D> g_CubeVertices;
 struct Vertex3D
 {
   glm::vec3   Position;
+  glm::vec3   Normal;
   
-  Vertex3D(const glm::vec3& position) 
-    : Position(position) {}
+  Vertex3D(const glm::vec3& position, const glm::vec3& normal) 
+    : Position(position), Normal(normal) {}
 };
 
 //
