@@ -28,8 +28,7 @@ class Scene
 
   private:
     std::shared_ptr<SceneNode> m_pRoot;
-
-    std::shared_ptr<SceneMeshNode> m_pNodeA;
-    std::shared_ptr<SceneMeshNode> m_pNodeB;
-    std::shared_ptr<SceneMeshNode> m_pNodeC; // Light Source
+    std::shared_ptr<SceneMeshNode> m_pPlatform;
+    std::shared_ptr<SceneMeshNode> m_pStaticObjectA;
+    std::shared_ptr<SceneMeshNode> m_pLight;
 };

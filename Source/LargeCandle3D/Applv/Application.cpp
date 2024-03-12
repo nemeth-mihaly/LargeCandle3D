@@ -41,7 +41,7 @@ static char* ReadShaderFile(const char* name)
 }
 
 //-----------------------------------------------
-//    GLFW specific stuff
+//    GLFW event callbacks
 //-----------------------------------------------
 
 #pragma GCC diagnostic push
@@ -51,24 +51,40 @@ static char* ReadShaderFile(const char* name)
 // GlfwKeyCallback()
 //
 
-static void GlfwKeyCallback(GLFWwindow* pWindow, i32 keyCode, i32 scancode, i32 action, i32 mods)
+static void GlfwKeyCallback(GLFWwindow* pWindow, i32 key, i32 scancode, i32 action, i32 mods)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  if (!(pApp && pApp->pMouseHandler))
-      return;
+  //if (!(pApp && pApp->pView->pKeyboardHandler))
+  //    return;
+
+  if (!(pApp && pApp->pView))
+    return;
+
+  //if (action == GLFW_PRESS)
+  //{
+  //  if (keyCode == GLFW_KEY_ESCAPE)
+  //    glfwSetWindowShouldClose(pWindow, GLFW_TRUE);
+  //
+  //  pApp->pView->pKeyboardHandler->VOnKeyDown(keyCode);
+  //}
+  //else
+  //if (action == GLFW_RELEASE)
+  //{
+  //  pApp->pView->pKeyboardHandler->VOnKeyUp(keyCode);
+  //}
 
   if (action == GLFW_PRESS)
   {
-    if (keyCode == GLFW_KEY_ESCAPE)
+    if (key == GLFW_KEY_ESCAPE)
       glfwSetWindowShouldClose(pWindow, GLFW_TRUE);
 
-    pApp->pKeyboardHandler->VOnKeyDown(keyCode);
+    pApp->pView->OnKeyDown(key);
   }
   else
   if (action == GLFW_RELEASE)
   {
-    pApp->pKeyboardHandler->VOnKeyUp(keyCode);
+    pApp->pView->OnKeyUp(key);
   }
 }
 
@@ -80,29 +96,45 @@ static void GlfwMouseMoveCallback(GLFWwindow *pWindow, f64 x, f64 y)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  if (!(pApp && pApp->pMouseHandler))
-      return;
+  //if (!(pApp && pApp->pView->pMouseHandler))
+  //    return;
 
-  pApp->pMouseHandler->VOnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
+  if (!(pApp && pApp->pView))
+    return;
+
+  //pApp->pView->pMouseHandler->VOnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
+
+  pApp->pView->OnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
 }
 
 //
 // GlfwMouseButtonCallback()
 //
 
-static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 buttonCode, i32 action, i32 mods)
+static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 button, i32 action, i32 mods)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  if (!(pApp && pApp->pMouseHandler))
+  //if (!(pApp && pApp->pView->pMouseHandler))
+  //  return;
+
+  if (!(pApp && pApp->pView))
     return;
 
+  //if (action == GLFW_PRESS)
+  //  pApp->pView->pMouseHandler->VOnMouseButtonDown(buttonCode);
+  //else
+  //if (action == GLFW_RELEASE)
+  //{
+  //  pApp->pView->pMouseHandler->VOnMouseButtonUp(buttonCode);
+  //}
+
   if (action == GLFW_PRESS)
-    pApp->pMouseHandler->VOnMouseButtonDown(buttonCode);
+    pApp->pView->OnMouseButtonDown(button);
   else
   if (action == GLFW_RELEASE)
   {
-    pApp->pMouseHandler->VOnMouseButtonUp(buttonCode);
+    pApp->pView->OnMouseButtonUp(button);
   }
 }
 
@@ -117,9 +149,6 @@ Application::Application()
   g_pApp = this;
 
   m_pWindow = NULL;
-
-  pKeyboardHandler = NULL;
-  pMouseHandler = NULL;
 }
 
 Application::~Application()
@@ -169,25 +198,15 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   delete[] vertShaderSource;
   delete[] fragShaderSource;
 
-  pMesh.reset(new Mesh(g_CubeVertices));
+  pCubeMesh.reset(new Mesh(g_CubeVertices));
 
-  m_pScene.reset(new Scene());
-
-  m_pCamera.reset(new Camera(scrWidth, scrHeight));
-  m_pScene->pCamera = m_pCamera;
-
-  m_pCameraController = new CameraController(m_pCamera);
-  pKeyboardHandler = m_pCameraController;
-  pMouseHandler = m_pCameraController;
+  pView.reset(new View());
 
   return true;
 }
 
 void Application::Shutdown()
 {
-  if (m_pCameraController)
-    delete m_pCameraController;
-
   if (g_pShader)
     delete g_pShader;
 
@@ -227,8 +246,7 @@ glm::vec2 Application::GetMousePos()
 
 void Application::Update(f32 deltaTime)
 {
-  m_pCamera->OnUpdate(deltaTime);
-  m_pCameraController->OnUpdate(deltaTime);
+  pView->OnUpdate(deltaTime);
 }
 
 void Application::Render()
@@ -236,7 +254,7 @@ void Application::Render()
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  m_pScene->OnRender();
+  pView->OnRender();
 
   glfwSwapBuffers(m_pWindow);
 }

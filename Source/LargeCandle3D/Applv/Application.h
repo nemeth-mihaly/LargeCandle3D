@@ -9,14 +9,12 @@
 
 #include "LargeCandle3D/Core/PrimTypes.h"
 
+#include "LargeCandle3D/Applv/View.h"
 #include "LargeCandle3D/Applv/Input.h"
 
 #include "LargeCandle3D/Graphics/Geometry.h"
 #include "LargeCandle3D/Graphics/Shader.h"
-#include "LargeCandle3D/Graphics/Camera.h"
-#include "LargeCandle3D/Graphics/CameraController.h"
 #include "LargeCandle3D/Graphics/Mesh.h"
-#include "LargeCandle3D/Graphics/Scene.h"
 
 //-----------------------------------------------
 //    Forward declarations
@@ -38,10 +36,9 @@ extern Shader* g_pShader;
 class Application
 {
   public:
-    IKeyboardHandler* pKeyboardHandler; 
-    IMouseHandler* pMouseHandler;
-
-    std::shared_ptr<Mesh> pMesh;
+    std::shared_ptr<View> pView;
+    
+    std::shared_ptr<Mesh> pCubeMesh;
 
     Application();
     ~Application();
@@ -62,9 +59,4 @@ class Application
 
     GLFWwindow* m_pWindow;
     i32 m_ScrWidth, m_ScrHeight;
-
-    std::shared_ptr<Scene> m_pScene;
-
-    std::shared_ptr<Camera> m_pCamera;
-    CameraController* m_pCameraController;
 };

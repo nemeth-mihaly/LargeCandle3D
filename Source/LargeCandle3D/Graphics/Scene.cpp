@@ -10,36 +10,21 @@ Scene::Scene()
 {
   m_pRoot.reset(new SceneNode());
 
-    m_pNodeA.reset(new SceneMeshNode(g_pApp->pMesh));
-    
-    {
-      m_pNodeA->Position = glm::vec3(-5.0f, 0.0f, 0.0f);
-      
-      m_pNodeA->Color = glm::vec3(0.3f, 0.7f, 0.3f);
-    }
+  m_pPlatform.reset(new SceneMeshNode(g_pApp->pCubeMesh));
+  m_pPlatform->Scale = glm::vec3(50.0f, 0.1f, 50.0f);
+  m_pPlatform->Color = glm::vec3(0.1f, 0.2f, 0.1f);
+  m_pRoot->VAddChild(m_pPlatform);
 
-    m_pRoot->VAddChild(m_pNodeA);
+  m_pStaticObjectA.reset(new SceneMeshNode(g_pApp->pCubeMesh));
+  m_pStaticObjectA->Position = glm::vec3(0.0f, 1.0f, 0.0f);
+  m_pStaticObjectA->Color = glm::vec3(0.1f, 0.4f, 0.1f);
+  m_pRoot->VAddChild(m_pStaticObjectA);
 
-      m_pNodeB.reset(new SceneMeshNode(g_pApp->pMesh));
-      
-      {
-        m_pNodeB->Position = glm::vec3(5.0f, 0.0f, 0.0f);
-
-        m_pNodeB->Color = glm::vec3(0.1f, 0.1f, 0.7f);
-      }
-
-      m_pNodeA->VAddChild(m_pNodeB);
-
-    m_pNodeC.reset(new SceneMeshNode(g_pApp->pMesh)); 
-    
-    {
-      m_pNodeC->Position = glm::vec3(2.5f, 2.5f, 2.5f);
-      m_pNodeC->Scale = glm::vec3(0.2f, 0.2f, 0.2f);
-
-      m_pNodeC->bIsLightSource = true;
-    }
-
-    m_pRoot->VAddChild(m_pNodeC);
+  m_pLight.reset(new SceneMeshNode(g_pApp->pCubeMesh));
+  m_pLight->bIsLightSource = true;
+  m_pLight->Position = glm::vec3(1.2f, 2.2f, 1.2f);
+  m_pLight->Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+  m_pRoot->VAddChild(m_pLight);
 }
 
 Scene::~Scene()
@@ -54,8 +39,8 @@ void Scene::OnRender()
     g_pShader->SetUniformMat4x4("u_Projection", pCamera->GetProjection());
     g_pShader->SetUniformMat4x4("u_View", pCamera->GetView());
 
-    g_pShader->SetUniform3f("u_LightSourcePos", m_pNodeC->Position);
-    g_pShader->SetUniform3f("u_LightSourceColor", m_pNodeC->Color);
+    g_pShader->SetUniform3f("u_LightSourcePos", m_pLight->Position);
+    g_pShader->SetUniform3f("u_LightSourceColor", m_pLight->Color);
     
     g_pShader->SetUniform3f("u_ViewPos", pCamera->GetPosition());
 
