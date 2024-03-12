@@ -28,7 +28,9 @@ class View
     ~View();
 
     void OnUpdate(f32 deltaTime);
+    
     void OnRender();
+    void OnImGuiRender();
 
     //
     // GLFW event callbacks

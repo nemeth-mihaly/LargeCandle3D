@@ -50,6 +50,8 @@ class Application
 
     glm::vec2 GetMousePos();
 
+    GLFWwindow* GetWindow() const { return m_pWindow; }
+
     i32 GetScrWidth() const { return m_ScrWidth; }
     i32 GetScrHeight() const { return m_ScrHeight; }
 

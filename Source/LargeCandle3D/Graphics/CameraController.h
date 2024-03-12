@@ -38,6 +38,7 @@ class CameraController : public IKeyboardHandler, public IMouseHandler
     std::shared_ptr<Camera> m_pCamera;
 
     bool m_bKeysDown[GLFW_KEY_LAST];
+    bool m_bMouseButtonsDown[GLFW_MOUSE_BUTTON_LAST];
 
     glm::vec2 m_MousePos;
     glm::vec2 m_PrevMousePos;

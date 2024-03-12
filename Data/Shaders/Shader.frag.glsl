@@ -1,5 +1,15 @@
 #version 460 core
 
+struct Material
+{
+  vec3 Ambient;
+  vec3 Diffuse;
+  vec3 Specular;
+  float Shininess;
+};
+
+uniform Material v_Material;
+
 in vec3 v_FragPos;
 in vec3 v_Normal;
 
@@ -23,7 +33,7 @@ void main()
 
   vec3 specular = specularStrength * pow(max(dot(viewDirection, reflectDirection), 0.0), 32) * u_LightSourceColor;
 
-  vec3 result = vec3(1.0, 1.0, 1.0);
+  vec3 result = vec3(u_LightSourceColor);
 
   if (u_bIsLightSource == 0)
     result = (ambient + diffuse + specular) * u_ObjectColor;

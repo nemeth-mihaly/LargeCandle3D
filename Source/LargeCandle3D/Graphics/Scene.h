@@ -21,6 +21,9 @@ class Scene
   public:
     std::shared_ptr<Camera> pCamera;
 
+    std::shared_ptr<SceneMeshNode> pObjectA;
+    std::shared_ptr<SceneMeshNode> pLight;
+
     Scene();
     ~Scene();
 
@@ -28,7 +31,4 @@ class Scene
 
   private:
     std::shared_ptr<SceneNode> m_pRoot;
-    std::shared_ptr<SceneMeshNode> m_pPlatform;
-    std::shared_ptr<SceneMeshNode> m_pStaticObjectA;
-    std::shared_ptr<SceneMeshNode> m_pLight;
 };

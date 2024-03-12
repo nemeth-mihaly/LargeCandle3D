@@ -10,6 +10,7 @@ CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
   : m_pCamera(pCamera)
 {
   memset(m_bKeysDown, 0, sizeof(m_bKeysDown));
+  memset(m_bMouseButtonsDown, 0, sizeof(m_bMouseButtonsDown));
 
   m_MousePos = g_pApp->GetMousePos();
   m_PrevMousePos = m_MousePos;
@@ -17,6 +18,17 @@ CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
 
 void CameraController::OnUpdate(f32 deltaTime)
 {
+  glm::vec2 deltaMousePos = (m_MousePos - m_PrevMousePos) * 0.003f;
+  m_PrevMousePos = m_MousePos;
+
+  if (!m_bMouseButtonsDown[GLFW_MOUSE_BUTTON_RIGHT])
+  {
+    glfwSetInputMode(g_pApp->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    return;
+  }
+
+  glfwSetInputMode(g_pApp->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   if (m_bKeysDown[GLFW_KEY_W])
     m_pCamera->MoveForward();
   else
@@ -40,9 +52,6 @@ void CameraController::OnUpdate(f32 deltaTime)
   {
     m_pCamera->MoveDown();
   }
-
-  glm::vec2 deltaMousePos = (m_MousePos - m_PrevMousePos) * 0.003f;
-  m_PrevMousePos = m_MousePos;
 
   if (!(deltaMousePos.x == 0.0f && deltaMousePos.y == 0.0f))
   {
@@ -80,10 +89,20 @@ bool CameraController::VOnMouseMove(f32 x, f32 y)
 
 bool CameraController::VOnMouseButtonDown(i32 button)
 {
+  if (!(0 <= button && button <= GLFW_MOUSE_BUTTON_LAST))
+    return false;
+
+  m_bMouseButtonsDown[button] = true;
+
   return true;
 }
 
 bool CameraController::VOnMouseButtonUp(i32 button)
 {
+  if (!(0 <= button && button <= GLFW_MOUSE_BUTTON_LAST))
+    return false;
+
+  m_bMouseButtonsDown[button] = false;
+
   return true;
 }

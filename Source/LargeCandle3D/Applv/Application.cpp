@@ -1,5 +1,9 @@
 #include "LargeCandle3D/Applv/Application.h"
 
+#include "LargeCandle3D/Vendor/imgui/imgui.h"
+#include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_glfw.h"
+#include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_opengl3.h"
+
 Application* g_pApp = NULL;
 Shader* g_pShader = NULL;
 
@@ -162,6 +166,10 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 
   glfwDefaultWindowHints();
 
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
   m_pWindow = glfwCreateWindow(scrWidth, scrHeight, title, nullptr, nullptr);
 
   m_ScrWidth = scrWidth;
@@ -176,7 +184,7 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   glfwSetCursorPosCallback(m_pWindow, GlfwMouseMoveCallback);
   glfwSetMouseButtonCallback(m_pWindow, GlfwMouseButtonCallback);
 
-  glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  // glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glfwMakeContextCurrent(m_pWindow);
 
@@ -186,6 +194,20 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   glEnable(GL_DEPTH_TEST);
 
   glfwSwapInterval(0);
+
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  
+  ImGuiIO& io = ImGui::GetIO(); 
+  (void)io;
+
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+  ImGui::StyleColorsDark();
+
+  ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
+  ImGui_ImplOpenGL3_Init("#version 460 core");  
 
   char* vertShaderSource = ReadShaderFile("Data\\Shaders\\Shader.vert.glsl");
   char* fragShaderSource = ReadShaderFile("Data\\Shaders\\Shader.frag.glsl");
@@ -209,6 +231,10 @@ void Application::Shutdown()
 {
   if (g_pShader)
     delete g_pShader;
+
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
 
   if (m_pWindow)
     glfwDestroyWindow(m_pWindow);
@@ -255,6 +281,15 @@ void Application::Render()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   pView->OnRender();
+
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
+
+    pView->OnImGuiRender();
+
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
   glfwSwapBuffers(m_pWindow);
 }

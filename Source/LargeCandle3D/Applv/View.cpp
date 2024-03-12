@@ -2,6 +2,8 @@
 
 #include "LargeCandle3D/Applv/Application.h"
 
+#include "LargeCandle3D/Vendor/imgui/imgui.h"
+
 //-----------------------------------------------
 //    Impl. of View class
 //-----------------------------------------------
@@ -34,6 +36,24 @@ void View::OnUpdate(f32 deltaTime)
 void View::OnRender()
 {
   m_pScene->OnRender();
+}
+
+void View::OnImGuiRender()
+{
+  ImGui::Begin("Scene Properties");
+    ImGui::SeparatorText("Object (Big cube)");
+    ImGui::SliderFloat3("Position##1", &m_pScene->pObjectA->Position[0], -10.0f, 10.0f);
+    ImGui::ColorEdit3("Color###1", &m_pScene->pObjectA->Color[0]);
+
+    ImGui::SeparatorText("Light Source (Small cube)");
+    ImGui::SliderFloat3("Position##2", &m_pScene->pLight->Position[0], -10.0f, 10.0f);
+    ImGui::ColorEdit3("Color##2", &m_pScene->pLight->Color[0]);
+
+    ImGuiIO& io = ImGui::GetIO(); 
+    ImGui::Text("Frame rate average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+  ImGui::End();
+
+  ImGui::ShowDemoWindow();
 }
 
 //
