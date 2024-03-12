@@ -18,7 +18,6 @@ SceneNode::SceneNode()
   Transform = glm::mat4(1.0f);
 
   bIsLightSource = false;
-  Color = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 SceneNode::~SceneNode()
@@ -36,7 +35,11 @@ void SceneNode::VPreRender()
   g_pShader->SetUniformMat4x4("u_Model", Transform);
 
   g_pShader->SetUniformBool("u_bIsLightSource", bIsLightSource);
-  g_pShader->SetUniform3f("u_ObjectColor", Color);
+
+  g_pShader->SetUniform3f("u_Material.Ambient", Material.Ambient);
+  g_pShader->SetUniform3f("u_Material.Diffuse", Material.Diffuse);
+  g_pShader->SetUniform3f("u_Material.Specular", Material.Specular);
+  g_pShader->SetUniform1f("u_Material.Shininess", Material.Shininess);
 }
 
 void SceneNode::VRender()

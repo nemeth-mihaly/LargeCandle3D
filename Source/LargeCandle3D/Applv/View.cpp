@@ -41,13 +41,26 @@ void View::OnRender()
 void View::OnImGuiRender()
 {
   ImGui::Begin("Scene Properties");
-    ImGui::SeparatorText("Object (Big cube)");
-    ImGui::SliderFloat3("Position##1", &m_pScene->pObjectA->Position[0], -10.0f, 10.0f);
-    ImGui::ColorEdit3("Color###1", &m_pScene->pObjectA->Color[0]);
+    
+    {
+      ImGui::SeparatorText("Object (Big cube)");
 
-    ImGui::SeparatorText("Light Source (Small cube)");
-    ImGui::SliderFloat3("Position##2", &m_pScene->pLight->Position[0], -10.0f, 10.0f);
-    ImGui::ColorEdit3("Color##2", &m_pScene->pLight->Color[0]);
+      auto node = m_pScene->pObjectA;
+
+      ImGui::SliderFloat3("Position##1", &node->Position[0], -10.0f, 10.0f);
+      ImGui::ColorEdit3("Material.Ambient##1", &node->Material.Ambient[0]);
+      ImGui::ColorEdit3("Material.Diffuse##1", &node->Material.Diffuse[0]);
+      ImGui::ColorEdit3("Material.Specular##1", &node->Material.Specular[0]);
+      ImGui::SliderFloat("Material.Shininess##1", &node->Material.Shininess, 0.0f, 128.0f);
+    }
+
+    {
+      ImGui::SeparatorText("Light Source (Small cube)");
+
+      auto node = m_pScene->pLight;
+
+      ImGui::SliderFloat3("Position##2", &node->Position[0], -10.0f, 10.0f);
+    }
 
     ImGuiIO& io = ImGui::GetIO(); 
     ImGui::Text("Frame rate average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);

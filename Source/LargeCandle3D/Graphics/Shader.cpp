@@ -1,5 +1,7 @@
 #include "LargeCandle3D/Graphics/Shader.h"
 
+#include <stdio.h>
+
 //-----------------------------------------------
 //    Impl. of Shader class
 //-----------------------------------------------
@@ -15,6 +17,7 @@ Shader::Shader(const char* vertSource, const char* fragSource)
   glAttachShader(m_ProgramID, fragShaderID);
 
   glLinkProgram(m_ProgramID);
+  CheckError(m_ProgramID, true);
 
   glDeleteShader(vertShaderID);
   glDeleteShader(fragShaderID);
@@ -36,10 +39,28 @@ void Shader::SetUniformBool(const char* name, bool value) const
   glUniform1i(uniformLocation, static_cast<i32>(value));
 }
 
+void Shader::SetUniform1f(const char* name, f32 value) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform1f(uniformLocation, value);
+}
+
+void Shader::SetUniform2f(const char* name, const glm::vec2& values) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform2f(uniformLocation, values.x, values.y);
+}
+
 void Shader::SetUniform3f(const char* name, const glm::vec3& values) const
 {
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
   glUniform3f(uniformLocation, values.x, values.y, values.z);
+}
+
+void Shader::SetUniform4f(const char* name, const glm::vec4& values) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform4f(uniformLocation, values.x, values.y, values.z, values.w);
 }
 
 void Shader::SetUniformMat4x4(const char* name, const glm::mat4& mat4x4) const
@@ -51,8 +72,40 @@ void Shader::SetUniformMat4x4(const char* name, const glm::mat4& mat4x4) const
 u32 Shader::Compile(const char* source, u32 type) const
 {
   u32 shaderID = glCreateShader(type);
-  glShaderSource(shaderID, 1, &source, nullptr);
+  glShaderSource(shaderID, 1, &source, NULL);
+
   glCompileShader(shaderID);
+  CheckError(shaderID);
 
   return shaderID;
+}
+
+void Shader::CheckError(u32 renderID, bool bIsProgram) const
+{
+  i32 result;
+  char logBuffer[BUFSIZ];
+
+  if (bIsProgram)
+  {
+    glGetProgramiv(renderID, GL_LINK_STATUS, &result);
+
+    if (result == false)
+      glGetProgramInfoLog(renderID, BUFSIZ, NULL, logBuffer);
+    {
+      return;
+    }
+  }
+  else
+  {
+    glGetShaderiv(renderID, GL_COMPILE_STATUS, &result);
+
+    if (result == false)
+      glGetShaderInfoLog(renderID, BUFSIZ, NULL, logBuffer);
+    else
+    {
+      return;
+    }
+  }
+
+  fprintf(stderr, "%s \n", logBuffer);
 }

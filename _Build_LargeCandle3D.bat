@@ -11,7 +11,7 @@ set SourcePath=Source\LargeCandle3D
 set LibPath=Lib\
 
 set Compiler=g++
-set CompilerFlags=-std=c++17 -Wall -Wextra -Wpedantic -I Source\ -O0 -ggdb
+set CompilerFlags=-std=c++17 -Wall -Wextra -Wpedantic -I Source\ -O2 -ggdb
 
 set LinkerFlags=-L Lib\ -lglfw3dll -lglad -lopengl32
 

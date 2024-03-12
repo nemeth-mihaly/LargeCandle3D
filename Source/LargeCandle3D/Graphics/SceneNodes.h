@@ -7,6 +7,7 @@
 
 #include "LargeCandle3D/Graphics/Geometry.h"
 #include "LargeCandle3D/Graphics/Mesh.h"
+#include "LargeCandle3D/Graphics/Material.h"
 
 //-----------------------------------------------
 //
@@ -47,7 +48,8 @@ class SceneNode : public ISceneNode
     glm::mat4 Transform;
 
     bool bIsLightSource;
-    glm::vec3 Color;
+    // glm::vec3 Color;
+    Material Material;
 
     SceneNode();
     virtual ~SceneNode();

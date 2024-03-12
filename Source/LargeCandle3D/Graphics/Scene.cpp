@@ -12,7 +12,6 @@ Scene::Scene()
 
   pObjectA.reset(new SceneMeshNode(g_pApp->pCubeMesh));
   pObjectA->Position = glm::vec3(0.0f, 0.0f, 0.0f);
-  pObjectA->Color = glm::vec3(0.1f, 0.4f, 0.1f);
   m_pRoot->VAddChild(pObjectA);
 
   pLight.reset(new SceneMeshNode(g_pApp->pCubeMesh));
@@ -34,9 +33,13 @@ void Scene::OnRender()
     g_pShader->SetUniformMat4x4("u_Projection", pCamera->GetProjection());
     g_pShader->SetUniformMat4x4("u_View", pCamera->GetView());
 
+    g_pShader->SetUniform3f("u_Light.Position", pLight->Position);
+    g_pShader->SetUniform3f("u_Light.Ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    g_pShader->SetUniform3f("u_Light.Diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    g_pShader->SetUniform3f("u_Light.Specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
     g_pShader->SetUniform3f("u_LightSourcePos", pLight->Position);
-    g_pShader->SetUniform3f("u_LightSourceColor", pLight->Color);
-    
+
     g_pShader->SetUniform3f("u_ViewPos", pCamera->GetPosition());
 
     m_pRoot->VPreRender();
