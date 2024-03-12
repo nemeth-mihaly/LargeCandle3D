@@ -1,10 +1,19 @@
 #include "LargeCandle3D/Applv/Application.h"
 
+#include "LargeCandle3D/Graphics/glDebugOutput.h"
+
+#include "LargeCandle3D/Vendor/stb/stb_image.h"
+
 #include "LargeCandle3D/Vendor/imgui/imgui.h"
 #include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_glfw.h"
 #include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_opengl3.h"
 
 Application* g_pApp = NULL;
+
+std::shared_ptr<Texture> g_pTextureDiff;
+std::shared_ptr<Texture> g_pTextureSpec;
+std::shared_ptr<Texture> g_pTextureEmission;
+
 Shader* g_pShader = NULL;
 
 //
@@ -59,24 +68,8 @@ static void GlfwKeyCallback(GLFWwindow* pWindow, i32 key, i32 scancode, i32 acti
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  //if (!(pApp && pApp->pView->pKeyboardHandler))
-  //    return;
-
   if (!(pApp && pApp->pView))
     return;
-
-  //if (action == GLFW_PRESS)
-  //{
-  //  if (keyCode == GLFW_KEY_ESCAPE)
-  //    glfwSetWindowShouldClose(pWindow, GLFW_TRUE);
-  //
-  //  pApp->pView->pKeyboardHandler->VOnKeyDown(keyCode);
-  //}
-  //else
-  //if (action == GLFW_RELEASE)
-  //{
-  //  pApp->pView->pKeyboardHandler->VOnKeyUp(keyCode);
-  //}
 
   if (action == GLFW_PRESS)
   {
@@ -100,13 +93,8 @@ static void GlfwMouseMoveCallback(GLFWwindow *pWindow, f64 x, f64 y)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  //if (!(pApp && pApp->pView->pMouseHandler))
-  //    return;
-
   if (!(pApp && pApp->pView))
     return;
-
-  //pApp->pView->pMouseHandler->VOnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
 
   pApp->pView->OnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
 }
@@ -119,19 +107,8 @@ static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 button, i32 action,
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  //if (!(pApp && pApp->pView->pMouseHandler))
-  //  return;
-
   if (!(pApp && pApp->pView))
     return;
-
-  //if (action == GLFW_PRESS)
-  //  pApp->pView->pMouseHandler->VOnMouseButtonDown(buttonCode);
-  //else
-  //if (action == GLFW_RELEASE)
-  //{
-  //  pApp->pView->pMouseHandler->VOnMouseButtonUp(buttonCode);
-  //}
 
   if (action == GLFW_PRESS)
     pApp->pView->OnMouseButtonDown(button);
@@ -169,6 +146,7 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);  
 
   m_pWindow = glfwCreateWindow(scrWidth, scrHeight, title, nullptr, nullptr);
 
@@ -184,12 +162,21 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   glfwSetCursorPosCallback(m_pWindow, GlfwMouseMoveCallback);
   glfwSetMouseButtonCallback(m_pWindow, GlfwMouseButtonCallback);
 
-  // glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
   glfwMakeContextCurrent(m_pWindow);
 
   if (!gladLoadGL())
     return false;
+
+  i32 flags; 
+  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+
+  if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+  {
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+    glDebugMessageCallback(glDebugOutput, NULL);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
+  }
 
   glEnable(GL_DEPTH_TEST);
 
@@ -209,6 +196,59 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
   ImGui_ImplOpenGL3_Init("#version 460 core");  
 
+  //
+  // Texture.Diffuse
+  //
+
+  i32 width, height, numChannels;
+  u8* pPixels = stbi_load("Data\\Textures\\WoodenContainerDiff.png", &width, &height, &numChannels, 0);
+
+  if (!pPixels)
+    return false;
+
+  g_pTextureDiff.reset(new Texture(width, height, numChannels, pPixels));
+
+  stbi_image_free(pPixels);
+
+  if (!g_pTextureDiff)
+    return false;
+
+  //
+  // Texture.Specular
+  //
+
+  pPixels = stbi_load("Data\\Textures\\WoodenContainerSpec.png", &width, &height, &numChannels, 0);
+
+  if (!pPixels)
+    return false;
+
+  g_pTextureSpec.reset(new Texture(width, height, numChannels, pPixels));
+
+  stbi_image_free(pPixels);
+
+  if (!g_pTextureSpec)
+    return false;
+
+  //
+  // Texture.Emission
+  //
+
+  pPixels = stbi_load("Data\\Textures\\WoodenContainerEmission.png", &width, &height, &numChannels, 0);
+
+  if (!pPixels)
+    return false;
+
+  g_pTextureEmission.reset(new Texture(width, height, numChannels, pPixels));
+
+  stbi_image_free(pPixels);
+
+  if (!g_pTextureEmission)
+    return false;
+
+  //
+  //  Shader
+  //
+
   char* vertShaderSource = ReadShaderFile("Data\\Shaders\\Shader.vert.glsl");
   char* fragShaderSource = ReadShaderFile("Data\\Shaders\\Shader.frag.glsl");
 
@@ -217,12 +257,29 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 
   g_pShader = new Shader(vertShaderSource, fragShaderSource);
 
+  if (!g_pShader)
+    return false;
+
   delete[] vertShaderSource;
   delete[] fragShaderSource;
 
+  //
+  //  Cube Mesh
+  //
+
   pCubeMesh.reset(new Mesh(g_CubeVertices));
 
+  if (!pCubeMesh)
+    return false;
+
+  //
+  //  View
+  //
+
   pView.reset(new View());
+
+  if (!pView)
+    return false;
 
   return true;
 }

@@ -1,5 +1,7 @@
 #include "LargeCandle3D/Graphics/SceneNodes.h"
 
+#include <stdio.h>
+
 #include "LargeCandle3D/Applv/Application.h"
 
 #include "LargeCandle3D/Graphics/CameraController.h"
@@ -36,10 +38,24 @@ void SceneNode::VPreRender()
 
   g_pShader->SetUniformBool("u_bIsLightSource", bIsLightSource);
 
-  g_pShader->SetUniform3f("u_Material.Ambient", Material.Ambient);
-  g_pShader->SetUniform3f("u_Material.Diffuse", Material.Diffuse);
-  g_pShader->SetUniform3f("u_Material.Specular", Material.Specular);
+  //g_pShader->SetUniform3f("u_Material.Ambient", Material.Ambient);
+  //g_pShader->SetUniform3f("u_Material.Diffuse", Material.Diffuse);
+  //g_pShader->SetUniform3f("u_Material.Specular", Material.Specular);
+
+  if (Material.Diffuse && Material.Specular && Material.Emission)
+  {
+    g_pShader->SetUniform1i("u_Material.Diffuse", 0);
+    Material.Diffuse->Bind(0);
+
+    g_pShader->SetUniform1i("u_Material.Specular", 1);
+    Material.Specular->Bind(1);
+
+    g_pShader->SetUniform1i("u_Material.Emission", 2);
+    Material.Emission->Bind(2);
+  }
+
   g_pShader->SetUniform1f("u_Material.Shininess", Material.Shininess);
+  g_pShader->SetUniform1f("u_EmissionStrength", Material.EmissionStrength);
 }
 
 void SceneNode::VRender()

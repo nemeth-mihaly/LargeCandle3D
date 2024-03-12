@@ -12,6 +12,9 @@ Scene::Scene()
 
   pObjectA.reset(new SceneMeshNode(g_pApp->pCubeMesh));
   pObjectA->Position = glm::vec3(0.0f, 0.0f, 0.0f);
+  pObjectA->Material.Diffuse = g_pTextureDiff;
+  pObjectA->Material.Specular = g_pTextureSpec;
+  pObjectA->Material.Emission = g_pTextureEmission;
   m_pRoot->VAddChild(pObjectA);
 
   pLight.reset(new SceneMeshNode(g_pApp->pCubeMesh));

@@ -48,10 +48,13 @@ void View::OnImGuiRender()
       auto node = m_pScene->pObjectA;
 
       ImGui::SliderFloat3("Position##1", &node->Position[0], -10.0f, 10.0f);
-      ImGui::ColorEdit3("Material.Ambient##1", &node->Material.Ambient[0]);
-      ImGui::ColorEdit3("Material.Diffuse##1", &node->Material.Diffuse[0]);
-      ImGui::ColorEdit3("Material.Specular##1", &node->Material.Specular[0]);
+
+      //ImGui::ColorEdit3("Material.Ambient##1", &node->Material.Ambient[0]);
+      //ImGui::ColorEdit3("Material.Diffuse##1", &node->Material.Diffuse[0]);
+      //ImGui::ColorEdit3("Material.Specular##1", &node->Material.Specular[0]);
+      
       ImGui::SliderFloat("Material.Shininess##1", &node->Material.Shininess, 0.0f, 128.0f);
+      ImGui::SliderFloat("Material.EmissionStrength##1", &node->Material.EmissionStrength, 0.0f, 3.0f);
     }
 
     {

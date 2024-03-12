@@ -1,7 +1,5 @@
 #pragma once
 
-#include "LargeCandle3D/Vendor/glad/glad.h"
-
 #include "LargeCandle3D/Core/PrimTypes.h"
 
 #include "LargeCandle3D/Graphics/Geometry.h"
@@ -23,6 +21,7 @@ class Shader
     void Use() const;
 
     void SetUniformBool(const char* name, bool value) const;
+    void SetUniform1i(const char* name, i32 value) const;
     void SetUniform1f(const char* name, f32 value) const;
     void SetUniform2f(const char* name, const glm::vec2& values) const;
     void SetUniform3f(const char* name, const glm::vec3& values) const;

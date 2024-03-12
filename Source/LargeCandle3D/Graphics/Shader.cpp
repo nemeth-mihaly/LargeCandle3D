@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "LargeCandle3D/Vendor/glad/glad.h"
+
 //-----------------------------------------------
 //    Impl. of Shader class
 //-----------------------------------------------
@@ -35,8 +37,16 @@ void Shader::Use() const
 
 void Shader::SetUniformBool(const char* name, bool value) const
 {
+  //i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  //glUniform1i(uniformLocation, static_cast<i32>(value));
+  
+  SetUniform1i(name, static_cast<i32>(value));
+}
+
+void Shader::SetUniform1i(const char* name, i32 value) const
+{
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
-  glUniform1i(uniformLocation, static_cast<i32>(value));
+  glUniform1i(uniformLocation, value);
 }
 
 void Shader::SetUniform1f(const char* name, f32 value) const

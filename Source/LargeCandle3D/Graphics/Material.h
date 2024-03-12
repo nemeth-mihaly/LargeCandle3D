@@ -1,8 +1,11 @@
 #pragma once
 
+#include <memory>
+
 #include "LargeCandle3D/Core/PrimTypes.h"
 
 #include "LargeCandle3D/Graphics/Geometry.h"
+#include "LargeCandle3D/Graphics/Texture.h"
 
 //-----------------------------------------------
 //
@@ -26,10 +29,15 @@ extern glm::vec3 g_Gray65;
 class Material
 {
   public:
-    glm::vec3 Ambient;
-    glm::vec3 Diffuse;
-    glm::vec3 Specular;
+    //glm::vec3 Ambient;
+    //glm::vec3 Diffuse;
+    //glm::vec3 Specular;
+    
+    std::shared_ptr<Texture> Diffuse;
+    std::shared_ptr<Texture> Specular;
+    std::shared_ptr<Texture> Emission;
     f32 Shininess;
+    f32 EmissionStrength;
 
     Material();
     ~Material();

@@ -13,6 +13,7 @@
 #include "LargeCandle3D/Applv/Input.h"
 
 #include "LargeCandle3D/Graphics/Geometry.h"
+#include "LargeCandle3D/Graphics/Texture.h"
 #include "LargeCandle3D/Graphics/Shader.h"
 #include "LargeCandle3D/Graphics/Mesh.h"
 
@@ -27,6 +28,11 @@ class Application;
 //-----------------------------------------------
 
 extern Application* g_pApp;
+
+extern std::shared_ptr<Texture> g_pTextureDiff;
+extern std::shared_ptr<Texture> g_pTextureSpec;
+extern std::shared_ptr<Texture> g_pTextureEmission;
+
 extern Shader* g_pShader;
 
 //

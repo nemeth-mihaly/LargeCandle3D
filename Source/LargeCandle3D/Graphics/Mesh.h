@@ -18,7 +18,6 @@ class Vertex3D;
 //
 //-----------------------------------------------
 
-extern std::vector<Vertex3D> g_QuadVertices;
 extern std::vector<Vertex3D> g_CubeVertices;
 
 //
@@ -29,9 +28,10 @@ struct Vertex3D
 {
   glm::vec3   Position;
   glm::vec3   Normal;
+  glm::vec2   TexCoords;
   
-  Vertex3D(const glm::vec3& position, const glm::vec3& normal) 
-    : Position(position), Normal(normal) {}
+  Vertex3D(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texCoords) 
+    : Position(position), Normal(normal), TexCoords(texCoords) {}
 };
 
 //

@@ -17,10 +17,11 @@ glm::vec3 g_Gray65(0.65f, 0.65f, 0.65f);
 
 Material::Material()
 {
-  Ambient = glm::vec3(0.2f, 0.2f, 0.2f);
-  Diffuse = g_White;
-  Specular = g_White;
+  //Ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+  //Diffuse = g_White;
+  //Specular = g_White;
   Shininess = 32.0f;
+  EmissionStrength = 1.0f;
 }
 
 Material::~Material()

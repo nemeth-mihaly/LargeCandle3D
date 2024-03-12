@@ -1,9 +1,5 @@
 #include "LargeCandle3D/Applv/Application.h"
 
-//
-// main()
-//
-
 int main()
 {  
   Application app;

@@ -2,47 +2,47 @@
 
 std::vector<Vertex3D> g_CubeVertices =
 {
-  {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
-  {{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
-  {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
-  {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
-  {{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
-  {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+  {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 0.0f,  0.0f}},
+  {{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 1.0f,  0.0f}},
+  {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 1.0f,  1.0f}},
+  {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 1.0f,  1.0f}},
+  {{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 0.0f,  1.0f}},
+  {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 0.0f,  0.0f}},
 
-  {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
-  {{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
-  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
-  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
-  {{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
-  {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+  {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, { 0.0f,  0.0f}},
+  {{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, { 1.0f,  0.0f}},
+  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, { 1.0f,  1.0f}},
+  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, { 1.0f,  1.0f}},
+  {{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, { 0.0f,  1.0f}},
+  {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, { 0.0f,  0.0f}},
 
-  {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
-  {{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
-  {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
-  {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
-  {{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
-  {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+  {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, { 1.0f,  0.0f}},
+  {{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, { 1.0f,  1.0f}},
+  {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, { 0.0f,  1.0f}},
+  {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, { 0.0f,  1.0f}},
+  {{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, { 0.0f,  0.0f}},
+  {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, { 1.0f,  0.0f}},
+ 
+  {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, { 1.0f,  0.0f}},
+  {{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, { 1.0f,  1.0f}},
+  {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, { 0.0f,  1.0f}},
+  {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, { 0.0f,  1.0f}},
+  {{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, { 0.0f,  0.0f}},
+  {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, { 1.0f,  0.0f}},
 
-  {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
-  {{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
-  {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
-  {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
-  {{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
-  {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+  {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, { 0.0f,  1.0f}},
+  {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, { 1.0f,  1.0f}},
+  {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, { 1.0f,  0.0f}},
+  {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, { 1.0f,  0.0f}},
+  {{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, { 0.0f,  0.0f}},
+  {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, { 0.0f,  1.0f}},
 
-  {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
-  {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
-  {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
-  {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
-  {{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
-  {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
-
-  {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
-  {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
-  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
-  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
-  {{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
-  {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}}
+  {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, { 0.0f,  1.0f}},
+  {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, { 1.0f,  1.0f}},
+  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, { 1.0f,  0.0f}},
+  {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, { 1.0f,  0.0f}},
+  {{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, { 0.0f,  0.0f}},
+  {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, { 0.0f,  1.0f}}
 };
 
 //-----------------------------------------------
@@ -63,12 +63,15 @@ Mesh::Mesh(const std::vector<Vertex3D>& vertices)
 
   glEnableVertexArrayAttrib(m_VAO, 0);
   glEnableVertexArrayAttrib(m_VAO, 1);
+  glEnableVertexArrayAttrib(m_VAO, 2);
 
   glVertexArrayAttribFormat(m_VAO, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex3D, Vertex3D::Position));
   glVertexArrayAttribFormat(m_VAO, 1, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex3D, Vertex3D::Normal));
+  glVertexArrayAttribFormat(m_VAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex3D, Vertex3D::TexCoords));
 
   glVertexArrayAttribBinding(m_VAO, 0, 0);
   glVertexArrayAttribBinding(m_VAO, 1, 0);
+  glVertexArrayAttribBinding(m_VAO, 2, 0);
 }
 
 Mesh::Mesh(const std::vector<Vertex3D>& vertices, 
@@ -90,12 +93,15 @@ Mesh::Mesh(const std::vector<Vertex3D>& vertices,
 
   glEnableVertexArrayAttrib(m_VAO, 0);
   glEnableVertexArrayAttrib(m_VAO, 1);
+  glEnableVertexArrayAttrib(m_VAO, 2);
 
   glVertexArrayAttribFormat(m_VAO, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex3D, Vertex3D::Position));
   glVertexArrayAttribFormat(m_VAO, 1, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex3D, Vertex3D::Normal));
+  glVertexArrayAttribFormat(m_VAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex3D, Vertex3D::TexCoords));
 
   glVertexArrayAttribBinding(m_VAO, 0, 0);
   glVertexArrayAttribBinding(m_VAO, 1, 0);
+  glVertexArrayAttribBinding(m_VAO, 2, 0);
 }
 
 Mesh::~Mesh()
