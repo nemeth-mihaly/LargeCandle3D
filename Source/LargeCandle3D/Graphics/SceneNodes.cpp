@@ -55,7 +55,6 @@ void SceneNode::VPreRender()
   }
 
   g_pShader->SetUniform1f("u_Material.Shininess", Material.Shininess);
-  g_pShader->SetUniform1f("u_EmissionStrength", Material.EmissionStrength);
 }
 
 void SceneNode::VRender()
@@ -107,4 +106,16 @@ SceneMeshNode::~SceneMeshNode()
 void SceneMeshNode::VRender()
 {
   m_pMesh->OnRender();
+}
+
+//-----------------------------------------------
+//    Impl. of SceneLightNode class
+//-----------------------------------------------
+
+SceneLightNode::SceneLightNode()
+{
+}
+
+SceneLightNode::~SceneLightNode()
+{
 }

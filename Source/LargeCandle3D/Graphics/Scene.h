@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <memory>
 
 #include "LargeCandle3D/Core/PrimTypes.h"
@@ -12,6 +13,8 @@
 //
 //-----------------------------------------------
 
+using SceneNodeMap = std::map<u32, std::shared_ptr<SceneNode>>;
+
 //
 // class Scene
 //
@@ -21,8 +24,9 @@ class Scene
   public:
     std::shared_ptr<Camera> pCamera;
 
-    std::shared_ptr<SceneMeshNode> pObjectA;
-    std::shared_ptr<SceneMeshNode> pLight;
+    std::shared_ptr<SceneMeshNode> pFloor;
+    std::shared_ptr<SceneMeshNode> pCrates[10];
+    std::shared_ptr<SceneMeshNode> pPointLights[4];
 
     Scene();
     ~Scene();

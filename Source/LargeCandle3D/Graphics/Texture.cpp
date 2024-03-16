@@ -2,7 +2,7 @@
 
 #include "LargeCandle3D/Vendor/glad/glad.h"
 
-Texture::Texture(i32 width, i32 height, i32 numChannels, u8* pPixels)
+Texture::Texture(i32 width, i32 height, i32 numChannels, void* pPixels)
 {
   glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 

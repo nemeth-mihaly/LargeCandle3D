@@ -14,7 +14,7 @@
 //-----------------------------------------------
 
 //
-// Interface class ISceneNode
+//  Interface class ISceneNode
 //
 
 class ISceneNode
@@ -32,7 +32,7 @@ class ISceneNode
 };
 
 //
-// class SceneNode
+//  class SceneNode
 //
 
 class SceneNode : public ISceneNode
@@ -64,16 +64,7 @@ class SceneNode : public ISceneNode
 };
 
 //
-// class CameraSceneNode
-//
-
-class CameraSceneNode
-{
-  friend class CameraController;
-};
-
-//
-// class SceneMeshNode
+//  class SceneMeshNode
 //
 
 class SceneMeshNode : public SceneNode
@@ -86,4 +77,15 @@ class SceneMeshNode : public SceneNode
 
   private:
     std::shared_ptr<Mesh> m_pMesh;
+};
+
+//
+//  class SceneLightNode
+//
+
+class SceneLightNode : public SceneNode
+{
+  public:
+    SceneLightNode();
+    ~SceneLightNode();
 };

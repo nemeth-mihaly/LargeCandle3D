@@ -1,5 +1,15 @@
 #include "LargeCandle3D/Graphics/Mesh.h"
 
+std::vector<Vertex3D> g_PlaneVertices =
+{
+  {{ 0.5f,  0.0f,  0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+  {{-0.5f,  0.0f,  0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+  {{-0.5f,  0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+  {{ 0.5f,  0.0f,  0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+  {{-0.5f,  0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+  {{ 0.5f,  0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+};
+
 std::vector<Vertex3D> g_CubeVertices =
 {
   {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 0.0f,  0.0f}},

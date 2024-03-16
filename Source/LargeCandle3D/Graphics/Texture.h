@@ -13,7 +13,7 @@
 class Texture
 {
   public:
-    Texture(i32 width, i32 height, i32 numChannels, u8* pPixels);
+    Texture(i32 width, i32 height, i32 numChannels, void* pPixels);
     ~Texture();
 
     void Bind(u32 unit = 0) const;

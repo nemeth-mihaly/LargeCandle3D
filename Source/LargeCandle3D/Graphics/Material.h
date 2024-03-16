@@ -29,15 +29,15 @@ extern glm::vec3 g_Gray65;
 class Material
 {
   public:
-    //glm::vec3 Ambient;
-    //glm::vec3 Diffuse;
-    //glm::vec3 Specular;
-    
+    glm::vec3 AmbientColor;
+    glm::vec3 DiffuseColor;
+    glm::vec3 SpecularColor;
+
+    f32 Shininess;
+
     std::shared_ptr<Texture> Diffuse;
     std::shared_ptr<Texture> Specular;
     std::shared_ptr<Texture> Emission;
-    f32 Shininess;
-    f32 EmissionStrength;
 
     Material();
     ~Material();

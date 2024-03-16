@@ -1,5 +1,8 @@
 #include "LargeCandle3D/Applv/Application.h"
 
+#include <iostream>
+#include <fstream>
+
 #include "LargeCandle3D/Graphics/glDebugOutput.h"
 
 #include "LargeCandle3D/Vendor/stb/stb_image.h"
@@ -10,9 +13,11 @@
 
 Application* g_pApp = NULL;
 
+std::shared_ptr<Texture> g_pTexture;
 std::shared_ptr<Texture> g_pTextureDiff;
 std::shared_ptr<Texture> g_pTextureSpec;
 std::shared_ptr<Texture> g_pTextureEmission;
+std::shared_ptr<Texture> g_pWoodFloor;
 
 Shader* g_pShader = NULL;
 
@@ -167,16 +172,16 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   if (!gladLoadGL())
     return false;
 
-  i32 flags; 
-  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-
-  if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
-  {
-    glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
-    glDebugMessageCallback(glDebugOutput, NULL);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
-  }
+//  i32 flags; 
+//  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+//
+//  if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+//  {
+//    glEnable(GL_DEBUG_OUTPUT);
+//    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+//    glDebugMessageCallback(glDebugOutput, NULL);
+//    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
+//  }
 
   glEnable(GL_DEPTH_TEST);
 
@@ -195,6 +200,9 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 
   ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
   ImGui_ImplOpenGL3_Init("#version 460 core");  
+
+  u32 pixels = 0xffffffff;
+  g_pTexture.reset(new Texture(1, 1, 3, &pixels));
 
   //
   // Texture.Diffuse
@@ -246,6 +254,22 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
     return false;
 
   //
+  //  Texture.WoodFloor
+  //
+
+  pPixels = stbi_load("Data\\Textures\\WoodFloor.png", &width, &height, &numChannels, 0);
+
+  if (!pPixels)
+    return false;
+
+  g_pWoodFloor.reset(new Texture(width, height, numChannels, pPixels));
+
+  stbi_image_free(pPixels);
+
+  if (!g_pWoodFloor)
+    return false;  
+
+  //
   //  Shader
   //
 
@@ -264,6 +288,15 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   delete[] fragShaderSource;
 
   //
+  //  Plane Mesh
+  //
+
+  pPlaneMesh.reset(new Mesh(g_PlaneVertices));
+
+  if (!pPlaneMesh)
+    return false;
+
+  //
   //  Cube Mesh
   //
 
@@ -280,6 +313,24 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 
   if (!pView)
     return false;
+
+//  std::ifstream f1("Data\\SceneNodes\\J.json");
+//  nlohmann::json data1 = nlohmann::json::parse(f1);
+//  std::cout << data1.at("pi") << '\n';
+//  std::cout << data1.at("happy") << '\n';
+//  f1.close();
+//
+//  data1["pi"] = 3.15;
+//
+//  std::ofstream of("Data\\SceneNodes\\J.json");
+//  of << std::setw(2) << data1 << std::endl;
+//  of.close();
+//
+//  std::ifstream f2("Data\\SceneNodes\\J.json");
+//  nlohmann::json data2 = nlohmann::json::parse(f2);
+//  std::cout << data2.at("pi") << '\n';
+//  std::cout << data2.at("happy") << '\n';
+//  f2.close();
 
   return true;
 }

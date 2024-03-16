@@ -18,6 +18,7 @@ class Vertex3D;
 //
 //-----------------------------------------------
 
+extern std::vector<Vertex3D> g_PlaneVertices;
 extern std::vector<Vertex3D> g_CubeVertices;
 
 //

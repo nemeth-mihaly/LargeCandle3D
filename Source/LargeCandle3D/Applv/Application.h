@@ -7,6 +7,8 @@
 #include "LargeCandle3D/Vendor/GLFW/glfw3.h"
 #include "LargeCandle3D/Vendor/glad/glad.h"
 
+#include "LargeCandle3D/Vendor/json.hpp"
+
 #include "LargeCandle3D/Core/PrimTypes.h"
 
 #include "LargeCandle3D/Applv/View.h"
@@ -29,9 +31,11 @@ class Application;
 
 extern Application* g_pApp;
 
+extern std::shared_ptr<Texture> g_pTexture;
 extern std::shared_ptr<Texture> g_pTextureDiff;
 extern std::shared_ptr<Texture> g_pTextureSpec;
 extern std::shared_ptr<Texture> g_pTextureEmission;
+extern std::shared_ptr<Texture> g_pWoodFloor;
 
 extern Shader* g_pShader;
 
@@ -44,6 +48,7 @@ class Application
   public:
     std::shared_ptr<View> pView;
     
+    std::shared_ptr<Mesh> pPlaneMesh;
     std::shared_ptr<Mesh> pCubeMesh;
 
     Application();
