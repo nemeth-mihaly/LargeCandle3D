@@ -16,7 +16,8 @@ SceneNode::SceneNode()
   m_pParent = NULL;
 
   Color = g_White;
-  Size = Vector3(1.0f, 1.0f, 1.0f);
+  
+  Scale = Vector3(1.0f);
 
   bIsLightSource = false;
 }
@@ -27,11 +28,11 @@ SceneNode::~SceneNode()
 
 void SceneNode::VPreRender()
 {
-  Transform = Translate(Position);
-  Transform = Transform.Multiply(Scale(Size));
+  Transform = Matrix4x4::g_Translate(Position);
+  Transform *= Matrix4x4::g_Scale(Scale);
 
   if (m_pParent)
-    Transform = Transform.Multiply(m_pParent->Transform);
+    Transform *= m_pParent->Transform;
 }
 
 void SceneNode::VRender(Scene* pScene)

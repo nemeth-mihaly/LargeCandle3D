@@ -52,7 +52,7 @@ class SceneNode : public ISceneNode
     Vector3 Color;
 
     Vector3 Position;
-    Vector3 Size;
+    Vector3 Scale;
 
     Matrix4x4 Transform;
 

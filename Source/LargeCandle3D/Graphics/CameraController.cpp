@@ -18,9 +18,9 @@ CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
 
 void CameraController::OnUpdate(f32 deltaTime)
 {
-  Vector2 deltaMousePos;
-  deltaMousePos.X = (m_MousePos.X - m_PrevMousePos.X) * 0.003f;
-  deltaMousePos.Y = (m_MousePos.Y - m_PrevMousePos.Y) * 0.003f;
+  Vector2 deltaMousePos(Vector2(m_MousePos - m_PrevMousePos) * 0.003f);
+  //deltaMousePos.X = (m_MousePos.X - m_PrevMousePos.X) * 0.003f;
+  //deltaMousePos.Y = (m_MousePos.Y - m_PrevMousePos.Y) * 0.003f;
 
   m_PrevMousePos = m_MousePos;
 
