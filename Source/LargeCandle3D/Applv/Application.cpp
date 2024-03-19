@@ -22,12 +22,12 @@ std::shared_ptr<Texture> g_pWoodFloor;
 Shader* g_pShader = NULL;
 
 //
-// ReadShaderFile()
+//  ReadFile()
 //
 
-static char* ReadShaderFile(const char* name)
+static char* ReadFile(const char* pName)
 {
-  FILE* fp = fopen(name, "rb");
+  FILE* fp = fopen(pName, "rb");
 
   if (!fp)
     return NULL;
@@ -56,6 +56,51 @@ static char* ReadShaderFile(const char* name)
   fclose(fp);
   
   return data;
+}
+
+//
+//  LoadGlslResource()
+//
+
+static bool LoadGlslResource(Shader*& shader, const char* pVertName, const char* pFragName)
+{
+  char* vertShaderSource = ReadFile(pVertName);
+  char* fragShaderSource = ReadFile(pFragName);
+
+  if (!(vertShaderSource && fragShaderSource))
+    return false;
+
+  shader = new Shader(vertShaderSource, fragShaderSource);
+
+  if (!shader)
+    return false;
+
+  delete[] vertShaderSource;
+  delete[] fragShaderSource;
+
+  return true;
+}
+
+//
+//  LoadTextureResource()
+//
+
+static bool LoadTextureResource(std::shared_ptr<Texture>& pTexture, const char* pFileName)
+{
+  i32 width, height, numChannels;
+  u8* pPixels = stbi_load(pFileName, &width, &height, &numChannels, 0);
+
+  if (!pPixels)
+    return false;
+
+  pTexture.reset(new Texture(width, height, numChannels, pPixels));
+
+  stbi_image_free(pPixels);
+
+  if (!pTexture)
+    return false;
+
+  return true;
 }
 
 //-----------------------------------------------
@@ -133,7 +178,6 @@ static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 button, i32 action,
 Application::Application()
 {
   g_pApp = this;
-
   m_pWindow = NULL;
 }
 
@@ -201,113 +245,56 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
   ImGui_ImplOpenGL3_Init("#version 460 core");  
 
-  u32 pixels = 0xffffffff;
-  g_pTexture.reset(new Texture(1, 1, 3, &pixels));
+//  if (!LoadGlslResource(g_pShader, 
+//    "Data\\Shaders\\Shader.vert.glsl", 
+//    "Data\\Shaders\\Shader.frag.glsl"))
+//  {
+//    return false;
+//  }
 
-  //
-  // Texture.Diffuse
-  //
-
-  i32 width, height, numChannels;
-  u8* pPixels = stbi_load("Data\\Textures\\WoodenContainerDiff.png", &width, &height, &numChannels, 0);
-
-  if (!pPixels)
+  if (!LoadGlslResource(g_pShader, 
+    "Data\\Shaders\\FlatColor.vert.glsl", 
+    "Data\\Shaders\\FlatColor.frag.glsl"))
+  {
     return false;
+  }
 
-  g_pTextureDiff.reset(new Texture(width, height, numChannels, pPixels));
-
-  stbi_image_free(pPixels);
-
-  if (!g_pTextureDiff)
-    return false;
-
-  //
-  // Texture.Specular
-  //
-
-  pPixels = stbi_load("Data\\Textures\\WoodenContainerSpec.png", &width, &height, &numChannels, 0);
-
-  if (!pPixels)
-    return false;
-
-  g_pTextureSpec.reset(new Texture(width, height, numChannels, pPixels));
-
-  stbi_image_free(pPixels);
-
-  if (!g_pTextureSpec)
-    return false;
-
-  //
-  // Texture.Emission
-  //
-
-  pPixels = stbi_load("Data\\Textures\\WoodenContainerEmission.png", &width, &height, &numChannels, 0);
-
-  if (!pPixels)
-    return false;
-
-  g_pTextureEmission.reset(new Texture(width, height, numChannels, pPixels));
-
-  stbi_image_free(pPixels);
-
-  if (!g_pTextureEmission)
-    return false;
-
-  //
-  //  Texture.WoodFloor
-  //
-
-  pPixels = stbi_load("Data\\Textures\\WoodFloor.png", &width, &height, &numChannels, 0);
-
-  if (!pPixels)
-    return false;
-
-  g_pWoodFloor.reset(new Texture(width, height, numChannels, pPixels));
-
-  stbi_image_free(pPixels);
-
-  if (!g_pWoodFloor)
-    return false;  
-
-  //
-  //  Shader
-  //
-
-  char* vertShaderSource = ReadShaderFile("Data\\Shaders\\Shader.vert.glsl");
-  char* fragShaderSource = ReadShaderFile("Data\\Shaders\\Shader.frag.glsl");
-
-  if (!(vertShaderSource && fragShaderSource))
-    return false;
-
-  g_pShader = new Shader(vertShaderSource, fragShaderSource);
-
-  if (!g_pShader)
-    return false;
-
-  delete[] vertShaderSource;
-  delete[] fragShaderSource;
-
-  //
-  //  Plane Mesh
-  //
+//  u32 pixels = 0xffffffff;
+//  g_pTexture.reset(new Texture(1, 1, 3, &pixels));
+//
+//  if (!LoadTextureResource(g_pTextureDiff, 
+//    "Data\\Textures\\WoodenContainerDiff.png"))
+//  {
+//    return false;
+//  }
+//
+//  if (!LoadTextureResource(g_pTextureSpec, 
+//    "Data\\Textures\\WoodenContainerSpec.png"))
+//  {
+//    return false;
+//  }
+//
+//  if (!LoadTextureResource(g_pTextureEmission, 
+//    "Data\\Textures\\WoodenContainerEmission.png"))
+//  {
+//    return false;
+//  }
+//
+//  if (!LoadTextureResource(g_pWoodFloor, 
+//    "Data\\Textures\\WoodFloor.png"))
+//  {
+//    return false;
+//  }
 
   pPlaneMesh.reset(new Mesh(g_PlaneVertices));
 
   if (!pPlaneMesh)
     return false;
 
-  //
-  //  Cube Mesh
-  //
-
   pCubeMesh.reset(new Mesh(g_CubeVertices));
 
   if (!pCubeMesh)
     return false;
-
-  //
-  //  View
-  //
 
   pView.reset(new View());
 
@@ -370,12 +357,12 @@ void Application::Run()
   }
 }
 
-glm::vec2 Application::GetMousePos()
+Vector2 Application::GetMousePos()
 {
   f64 x, y;
   glfwGetCursorPos(m_pWindow, &x, &y);
   
-  return glm::vec2(static_cast<f32>(x), static_cast<f32>(y));
+  return Vector2(static_cast<f32>(x), static_cast<f32>(y));
 }
 
 void Application::Update(f32 deltaTime)

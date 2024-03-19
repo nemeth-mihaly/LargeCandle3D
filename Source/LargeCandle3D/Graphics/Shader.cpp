@@ -55,28 +55,28 @@ void Shader::SetUniform1f(const char* name, f32 value) const
   glUniform1f(uniformLocation, value);
 }
 
-void Shader::SetUniform2f(const char* name, const glm::vec2& values) const
+void Shader::SetUniform2f(const char* name, const Vector2& values) const
 {
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
-  glUniform2f(uniformLocation, values.x, values.y);
+  glUniform2f(uniformLocation, values.X, values.Y);
 }
 
-void Shader::SetUniform3f(const char* name, const glm::vec3& values) const
+void Shader::SetUniform3f(const char* name, const Vector3& values) const
 {
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
-  glUniform3f(uniformLocation, values.x, values.y, values.z);
+  glUniform3f(uniformLocation, values.X, values.Y, values.Z);
 }
 
-void Shader::SetUniform4f(const char* name, const glm::vec4& values) const
+void Shader::SetUniform4f(const char* name, const Vector4& values) const
 {
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
-  glUniform4f(uniformLocation, values.x, values.y, values.z, values.w);
+  glUniform4f(uniformLocation, values.X, values.Y, values.Z, values.W);
 }
 
-void Shader::SetUniformMat4x4(const char* name, const glm::mat4& mat4x4) const
+void Shader::SetUniformMat4x4(const char* name, const Matrix4x4& mat4x4) const
 {
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
-  glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(mat4x4));
+  glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, mat4x4.AsValuePtr());
 }
 
 u32 Shader::Compile(const char* source, u32 type) const

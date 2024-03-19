@@ -11,16 +11,16 @@
 //
 //-----------------------------------------------
 
-extern glm::vec3 g_White;
-extern glm::vec3 g_Black;
-extern glm::vec3 g_Cyan;
-extern glm::vec3 g_Red;
-extern glm::vec3 g_Green;
-extern glm::vec3 g_Blue;
-extern glm::vec3 g_Yellow;
-extern glm::vec3 g_Gray40;
-extern glm::vec3 g_Gray25;
-extern glm::vec3 g_Gray65;
+extern  Vector3  g_White;
+extern  Vector3  g_Black;
+extern  Vector3  g_Cyan;
+extern  Vector3  g_Red;
+extern  Vector3  g_Green;
+extern  Vector3  g_Blue;
+extern  Vector3  g_Yellow;
+extern  Vector3  g_Gray40;
+extern  Vector3  g_Gray25;
+extern  Vector3  g_Gray65;
 
 //
 // class Material
@@ -29,15 +29,15 @@ extern glm::vec3 g_Gray65;
 class Material
 {
   public:
-    glm::vec3 AmbientColor;
-    glm::vec3 DiffuseColor;
-    glm::vec3 SpecularColor;
+    Vector3     Ambient;
+    Vector3     Diffuse;
+    Vector3     Specular;
 
-    f32 Shininess;
+    f32           Shininess;
 
-    std::shared_ptr<Texture> Diffuse;
-    std::shared_ptr<Texture> Specular;
-    std::shared_ptr<Texture> Emission;
+    //std::shared_ptr<Texture> Diffuse;
+    //std::shared_ptr<Texture> Specular;
+    //std::shared_ptr<Texture> Emission;
 
     Material();
     ~Material();

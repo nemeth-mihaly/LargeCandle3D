@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <list>
 #include <memory>
 
 #include "LargeCandle3D/Core/PrimTypes.h"
@@ -9,9 +10,15 @@
 #include "LargeCandle3D/Graphics/Mesh.h"
 #include "LargeCandle3D/Graphics/Material.h"
 
+class Scene;
+
 //-----------------------------------------------
 //
 //-----------------------------------------------
+
+class SceneLightNode;
+
+using LightList = std::list<std::shared_ptr<SceneLightNode>>;
 
 //
 //  Interface class ISceneNode
@@ -23,8 +30,8 @@ class ISceneNode
     virtual ~ISceneNode() = default;
 
     virtual void VPreRender() = 0;
-    virtual void VRender() = 0;
-    virtual void VRenderChild() = 0;
+    virtual void VRender(Scene* pScene) = 0;
+    virtual void VRenderChild(Scene* pScene) = 0;
     virtual void VPostRender() = 0;
 
     virtual void VAddChild(const std::shared_ptr<ISceneNode>& pChild) = 0;
@@ -42,21 +49,22 @@ class SceneNode : public ISceneNode
     std::vector<std::shared_ptr<ISceneNode>> m_Childs;
 
   public:
-    glm::vec3 Position;
-    glm::vec3 Scale;
+    Vector3 Color;
 
-    glm::mat4 Transform;
+    Vector3 Position;
+    Vector3 Size;
+
+    Matrix4x4 Transform;
 
     bool bIsLightSource;
-    // glm::vec3 Color;
     Material Material;
 
     SceneNode();
     virtual ~SceneNode();
 
     virtual void VPreRender();
-    virtual void VRender();
-    virtual void VRenderChild();
+    virtual void VRender(Scene* pScene);
+    virtual void VRenderChild(Scene* pScene);
     virtual void VPostRender();
 
     virtual void VAddChild(const std::shared_ptr<ISceneNode>& pChild);
@@ -73,7 +81,7 @@ class SceneMeshNode : public SceneNode
     SceneMeshNode(const std::shared_ptr<Mesh>& pMesh);
     ~SceneMeshNode();
 
-    virtual void VRender();
+    virtual void VRender(Scene* pScene);
 
   private:
     std::shared_ptr<Mesh> m_pMesh;
@@ -86,6 +94,66 @@ class SceneMeshNode : public SceneNode
 class SceneLightNode : public SceneNode
 {
   public:
+    Vector3   Ambient;
+    Vector3   Diffuse;
+    Vector3   Specular;
+    Vector3   Emissive;
+
     SceneLightNode();
     ~SceneLightNode();
+};
+
+//
+//  class SceneDirLight
+//
+
+class SceneDirLight : public SceneLightNode
+{
+  public:
+    Vector3   Direction;
+
+    SceneDirLight(const Vector3& direction, const Vector3& ambient, 
+      const Vector3& diffuse, const Vector3& specular);
+    ~SceneDirLight();
+
+    virtual void VRender(Scene* pScene);
+};
+
+//
+//  class ScenePointLight
+//
+
+class ScenePointLight : public SceneLightNode
+{
+  public:
+    f32   ConstantAtten;
+    f32   LinearAtten;
+    f32   QuadraticAtten;
+
+    ScenePointLight();
+    ~ScenePointLight();
+
+    virtual void VRender(Scene* pScene);
+};
+
+//
+//  class SceneSpotLight
+//
+
+class SceneSpotLight : public SceneLightNode
+{
+  public:
+    Vector3       Direction;
+
+    f32           CutOffAngle;
+    f32           OuterCutOffAngle;
+
+    f32           ConstantAtten;
+    f32           LinearAtten;
+    f32           QuadraticAtten;
+
+    SceneSpotLight();
+    ~SceneSpotLight();
+
+    virtual void VRender(Scene* pScene);
 };

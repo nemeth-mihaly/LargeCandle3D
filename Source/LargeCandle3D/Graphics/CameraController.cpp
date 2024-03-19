@@ -18,7 +18,10 @@ CameraController::CameraController(const std::shared_ptr<Camera>& pCamera)
 
 void CameraController::OnUpdate(f32 deltaTime)
 {
-  glm::vec2 deltaMousePos = (m_MousePos - m_PrevMousePos) * 0.003f;
+  Vector2 deltaMousePos;
+  deltaMousePos.X = (m_MousePos.X - m_PrevMousePos.X) * 0.003f;
+  deltaMousePos.Y = (m_MousePos.Y - m_PrevMousePos.Y) * 0.003f;
+
   m_PrevMousePos = m_MousePos;
 
   if (!m_bMouseButtonsDown[GLFW_MOUSE_BUTTON_RIGHT])
@@ -53,10 +56,10 @@ void CameraController::OnUpdate(f32 deltaTime)
     m_pCamera->MoveDown();
   }
 
-  if (!(deltaMousePos.x == 0.0f && deltaMousePos.y == 0.0f))
+  if (!(deltaMousePos.X == 0.0f && deltaMousePos.Y == 0.0f))
   {
-    f32 pitch = deltaMousePos.y * m_pCamera->m_RotationSpeed;
-    f32 yaw = deltaMousePos.x * m_pCamera->m_RotationSpeed;
+    f32 pitch = deltaMousePos.Y * m_pCamera->m_RotationSpeed;
+    f32 yaw = deltaMousePos.X * m_pCamera->m_RotationSpeed;
     m_pCamera->Rotate(yaw, pitch);
   }
 }
@@ -83,7 +86,9 @@ bool CameraController::VOnKeyUp(i32 key)
 
 bool CameraController::VOnMouseMove(f32 x, f32 y)
 {
-  m_MousePos = glm::vec2(x, y);
+  m_MousePos.X = x;
+  m_MousePos.Y = y;
+
   return true;
 }
 

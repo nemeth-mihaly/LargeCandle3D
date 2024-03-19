@@ -1,13 +1,12 @@
 #pragma once
 
-#include <iostream>
+#include <stdio.h>
 #include <vector>
 
 #define GLFW_INCLUDE_NONE
 #include "LargeCandle3D/Vendor/GLFW/glfw3.h"
 #include "LargeCandle3D/Vendor/glad/glad.h"
-
-#include "LargeCandle3D/Vendor/json.hpp"
+#include "LargeCandle3D/Vendor/nlohmann/json.hpp"
 
 #include "LargeCandle3D/Core/PrimTypes.h"
 
@@ -31,11 +30,11 @@ class Application;
 
 extern Application* g_pApp;
 
-extern std::shared_ptr<Texture> g_pTexture;
-extern std::shared_ptr<Texture> g_pTextureDiff;
-extern std::shared_ptr<Texture> g_pTextureSpec;
-extern std::shared_ptr<Texture> g_pTextureEmission;
-extern std::shared_ptr<Texture> g_pWoodFloor;
+//extern std::shared_ptr<Texture> g_pTexture;
+//extern std::shared_ptr<Texture> g_pTextureDiff;
+//extern std::shared_ptr<Texture> g_pTextureSpec;
+//extern std::shared_ptr<Texture> g_pTextureEmission;
+//extern std::shared_ptr<Texture> g_pWoodFloor;
 
 extern Shader* g_pShader;
 
@@ -59,7 +58,7 @@ class Application
 
     void Run();
 
-    glm::vec2 GetMousePos();
+    Vector2 GetMousePos();
 
     GLFWwindow* GetWindow() const { return m_pWindow; }
 

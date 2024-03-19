@@ -31,25 +31,27 @@ class Camera
 
     void Rotate(f32 yaw, f32 pitch);
 
-    const glm::vec3& GetPosition() const { return m_Position; }
-    const glm::vec3& GetDirection() const { return m_Forward; }
+    const Vector3& GetPosition() const { return m_Position; }
+    const Vector3& GetDirection() const { return m_Forward; }
 
-    const glm::mat4& GetView() const { return m_View; }
-    const glm::mat4& GetProjection() const { return m_Projection; }
+    const Matrix4x4& GetView() const { return m_View; }
+    const Matrix4x4& GetProjection() const { return m_Projection; }
 
   private:
     void RecalcView();
 
     bool m_bIsMoved;
 
-    glm::vec3 m_Position;
-    glm::vec3 m_Direction;
+    Vector3   m_Position;
 
-    glm::vec3 m_Forward;
-    glm::vec3 m_Right;
+    Vector3   m_Direction;
 
-    glm::mat4 m_Projection;
-    glm::mat4 m_View;
+    Vector3   m_Forward;
+    Vector3   m_Right;
+    
+    Matrix4x4 m_Projection;
+
+    Matrix4x4 m_View;
 
     f32 m_Speed;
     f32 m_RotationSpeed;
