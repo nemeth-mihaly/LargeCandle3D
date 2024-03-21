@@ -2,14 +2,6 @@
 
 #include "LargeCandle3D/Core/PrimTypes.h"
 
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
-//
-// class Texture
-//
-
 class Texture
 {
   public:

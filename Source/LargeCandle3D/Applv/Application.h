@@ -31,7 +31,7 @@ class Application;
 extern Application* g_pApp;
 
 //extern std::shared_ptr<Texture> g_pTexture;
-//extern std::shared_ptr<Texture> g_pTextureDiff;
+extern std::shared_ptr<Texture> g_pTextureDiff;
 //extern std::shared_ptr<Texture> g_pTextureSpec;
 //extern std::shared_ptr<Texture> g_pTextureEmission;
 //extern std::shared_ptr<Texture> g_pWoodFloor;

@@ -4,14 +4,6 @@
 
 #include "LargeCandle3D/Graphics/Geometry.h"
 
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
-//
-// class Shader
-//
-
 class Shader
 {
   public:

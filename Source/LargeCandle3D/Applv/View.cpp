@@ -31,6 +31,7 @@ void View::OnUpdate(f32 deltaTime)
 {
   m_pCamera->OnUpdate(deltaTime);
   m_pCameraController->OnUpdate(deltaTime);
+  m_pScene->OnUpdate(deltaTime);
 }
 
 void View::OnRender()

@@ -17,9 +17,9 @@ class Vector4;
 //
 //-----------------------------------------------
 
-extern Vector3 g_Forward;
-extern Vector3 g_Right;
-extern Vector3 g_Up;
+//extern Vector3 g_Forward;
+//extern Vector3 g_Right;
+//extern Vector3 g_Up;
 
 extern f32 Radians(f32 degrees);
 
@@ -70,8 +70,10 @@ class Vector2
     Vector2& Divide(f32 value);
 
     f32 Length() const;
-    Vector2& Normalize();
+    Vector2 Normalize() const;
     f32 Distance(const Vector2& other) const;
+
+    f32 Dot(const Vector2& other) const;
 };
 
 //
@@ -122,11 +124,15 @@ class Vector3
     Vector3& Divide(f32 value);
 
     f32 Length() const;
-    Vector3& Normalize();
+    Vector3 Normalize() const;
     f32 Distance(const Vector3& other) const;
 
     f32 Dot(const Vector3& other) const;
     Vector3 Cross(const Vector3& other) const;
+
+    static Vector3 Forward();
+    static Vector3 Right();
+    static Vector3 Up();
 };
 
 //
@@ -178,7 +184,8 @@ class Vector4
     Vector4& Divide(f32 value);
 
     f32 Length() const;
-    Vector4& Normalize();
+    Vector4 Normalize() const;
+    f32 Distance(const Vector4& other) const;
 
     f32 Dot(const Vector4& other) const;
 };
@@ -220,12 +227,18 @@ class Matrix4x4
 
     Matrix4x4& Multiply(const Matrix4x4& other);
 
-    static Matrix4x4 g_Perspective(f32 fov, f32 width, f32 height, f32 near, f32 far);
-    static Matrix4x4 g_LookAt(Vector3 eye, Vector3 center, Vector3 up);
+    static Matrix4x4 Perspective(f32 fovY, f32 width, f32 height, f32 zNear, f32 zFar);
+    static Matrix4x4 LookAt(const Vector3& position, const Vector3& target, const Vector3& up);
 
-    static Matrix4x4 g_Translate(const Vector3& translation);
-    
-    // TODO: g_Rotate();
+    static Matrix4x4 Translate(const Vector3& translation);
 
-    static Matrix4x4 g_Scale(const Vector3& scale);
+    //static Matrix4x4 Rotate(f32 angle, const Vector3& axis);
+
+    static Matrix4x4 RotateX(f32 angle);
+    static Matrix4x4 RotateY(f32 angle);
+    static Matrix4x4 RotateZ(f32 angle);
+
+    static Matrix4x4 Scale(const Vector3& scale);
+
+    static Matrix4x4 Identity();
 };

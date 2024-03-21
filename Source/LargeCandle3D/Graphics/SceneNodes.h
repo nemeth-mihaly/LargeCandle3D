@@ -11,23 +11,16 @@
 #include "LargeCandle3D/Graphics/Material.h"
 
 class Scene;
-
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
 class SceneLightNode;
 
 using LightList = std::list<std::shared_ptr<SceneLightNode>>;
-
-//
-//  Interface class ISceneNode
-//
 
 class ISceneNode
 {
   public:
     virtual ~ISceneNode() = default;
+
+    virtual void VOnUpdate(f32 deltaTime) = 0;
 
     virtual void VPreRender() = 0;
     virtual void VRender(Scene* pScene) = 0;
@@ -37,10 +30,6 @@ class ISceneNode
     virtual void VAddChild(const std::shared_ptr<ISceneNode>& pChild) = 0;
     virtual void VRemoveChild() = 0;
 };
-
-//
-//  class SceneNode
-//
 
 class SceneNode : public ISceneNode
 {
@@ -52,6 +41,7 @@ class SceneNode : public ISceneNode
     Vector3 Color;
 
     Vector3 Position;
+    Vector3 Rotation;
     Vector3 Scale;
 
     Matrix4x4 Transform;
@@ -62,6 +52,8 @@ class SceneNode : public ISceneNode
     SceneNode();
     virtual ~SceneNode();
 
+    virtual void VOnUpdate(f32 deltaTime);
+
     virtual void VPreRender();
     virtual void VRender(Scene* pScene);
     virtual void VRenderChild(Scene* pScene);
@@ -70,10 +62,6 @@ class SceneNode : public ISceneNode
     virtual void VAddChild(const std::shared_ptr<ISceneNode>& pChild);
     virtual void VRemoveChild();
 };
-
-//
-//  class SceneMeshNode
-//
 
 class SceneMeshNode : public SceneNode
 {
@@ -87,10 +75,6 @@ class SceneMeshNode : public SceneNode
     std::shared_ptr<Mesh> m_pMesh;
 };
 
-//
-//  class SceneLightNode
-//
-
 class SceneLightNode : public SceneNode
 {
   public:
@@ -102,10 +86,6 @@ class SceneLightNode : public SceneNode
     SceneLightNode();
     ~SceneLightNode();
 };
-
-//
-//  class SceneDirLight
-//
 
 class SceneDirLight : public SceneLightNode
 {
@@ -119,10 +99,6 @@ class SceneDirLight : public SceneLightNode
     virtual void VRender(Scene* pScene);
 };
 
-//
-//  class ScenePointLight
-//
-
 class ScenePointLight : public SceneLightNode
 {
   public:
@@ -135,10 +111,6 @@ class ScenePointLight : public SceneLightNode
 
     virtual void VRender(Scene* pScene);
 };
-
-//
-//  class SceneSpotLight
-//
 
 class SceneSpotLight : public SceneLightNode
 {

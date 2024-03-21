@@ -262,11 +262,11 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 //  u32 pixels = 0xffffffff;
 //  g_pTexture.reset(new Texture(1, 1, 3, &pixels));
 //
-//  if (!LoadTextureResource(g_pTextureDiff, 
-//    "Data\\Textures\\WoodenContainerDiff.png"))
-//  {
-//    return false;
-//  }
+  if (!LoadTextureResource(g_pTextureDiff, 
+    "Data\\Textures\\WoodenContainerDiff.png"))
+  {
+    return false;
+  }
 //
 //  if (!LoadTextureResource(g_pTextureSpec, 
 //    "Data\\Textures\\WoodenContainerSpec.png"))

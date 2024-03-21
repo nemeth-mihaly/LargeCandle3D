@@ -9,10 +9,9 @@ Camera::Camera(i32 width, i32 height)
   m_bIsMoved = false;
 
   m_Position.Z = 5.0f;
-  m_Forward = g_Forward;
+  m_Forward = Vector3::Forward();
 
-  m_Projection = Matrix4x4::g_Perspective(Radians(45.0f), static_cast<f32>(width), static_cast<f32>(height), 0.001f, 1000.0f);
-
+  m_Projection = Matrix4x4::Perspective(Radians(45.0f), static_cast<f32>(width), static_cast<f32>(height), 0.001f, 1000.0f);
   RecalcView();
 
   m_Speed = 4.0f;
@@ -27,10 +26,6 @@ void Camera::OnUpdate(f32 deltaTime)
 {
   if (m_bIsMoved)
   {
-    //m_Position.X += m_Direction.X * m_Speed * deltaTime;
-    //m_Position.Y += m_Direction.Y * m_Speed * deltaTime;
-    //m_Position.Z += m_Direction.Z * m_Speed * deltaTime;
-
     m_Position += m_Direction * m_Speed * deltaTime;
     RecalcView();
   }
@@ -41,7 +36,7 @@ void Camera::OnUpdate(f32 deltaTime)
   m_Direction.Y = 0.0f;
   m_Direction.Z = 0.0f;
   
-  Vector3 right = m_Forward.Cross(g_Up);
+  Vector3 right = m_Forward.Cross(Vector3::Up());
   m_Right.X = right.X;
   m_Right.Y = right.Y;
   m_Right.Z = right.Z;
@@ -49,61 +44,37 @@ void Camera::OnUpdate(f32 deltaTime)
 
 void Camera::MoveForward()
 {
-  //m_Direction.X += m_Forward.X;
-  //m_Direction.Y += m_Forward.Y;
-  //m_Direction.Z += m_Forward.Z;
-
   m_Direction += m_Forward;
   m_bIsMoved = true;
 }
 
 void Camera::MoveBackward()
 {
-  //m_Direction.X += -m_Forward.X;
-  //m_Direction.Y += -m_Forward.Y;
-  //m_Direction.Z += -m_Forward.Z;
-
   m_Direction -= m_Forward;
   m_bIsMoved = true;
 }
 
 void Camera::MoveLeft()
 {
-  //m_Direction.X += -m_Right.X;
-  //m_Direction.Y += -m_Right.Y;
-  //m_Direction.Z += -m_Right.Z;
-
   m_Direction -= m_Right;
   m_bIsMoved = true;
 }
 
 void Camera::MoveRight()
 {
-  //m_Direction.X += m_Right.X;
-  //m_Direction.Y += m_Right.Y;
-  //m_Direction.Z += m_Right.Z;
-
   m_Direction += m_Right;
   m_bIsMoved = true;
 }
 
 void Camera::MoveUp()
 {
-  // m_Direction.X += g_Up.X;
-  // m_Direction.Y += g_Up.Y;
-  // m_Direction.Z += g_Up.Z;
-
-  m_Direction += g_Up;
+  m_Direction += Vector3::Up();
   m_bIsMoved = true;
 }
 
 void Camera::MoveDown()
 {
-  //m_Direction.X -= g_Up.X;
-  //m_Direction.Y -= g_Up.Y;
-  //m_Direction.Z -= g_Up.Z;
-
-  m_Direction -= g_Up;
+  m_Direction -= Vector3::Up();
   m_bIsMoved = true;  
 }
 
@@ -118,12 +89,14 @@ void Camera::Rotate(f32 yaw, f32 pitch)
   m_bIsMoved = true;
 }
 
+#include <iostream>
+
 void Camera::RecalcView()
 {
-  //Vector3 posForw;
-  //posForw.X = m_Position.X + m_Forward.X;
-  //posForw.Y = m_Position.Y + m_Forward.Y;
-  //posForw.Z = m_Position.Z + m_Forward.Z;
+  m_View = Matrix4x4::LookAt(m_Position, Vector3(m_Position + m_Forward), Vector3::Up());
+//  m_View = Matrix4x4::LookAt(m_Position, m_Forward, Vector3::Up());
 
-  m_View = Matrix4x4::g_LookAt(m_Position, Vector3(m_Position + m_Forward), g_Up);
+//  std::cout << "--- View Matrix --- \n";
+//  PrintMatrix4x4(m_View);
+//  std::cout << "------------------- \n";
 }

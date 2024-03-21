@@ -4,82 +4,25 @@
 
 #include "LargeCandle3D/Applv/Application.h"
 
-Vector3 cratePositions[] = 
-{
-  Vector3( 0.0f,  0.0f,  0.0f),
-  Vector3( 2.0f,  5.0f, -15.0f),
-  Vector3(-1.5f, -2.2f, -2.5f),
-  Vector3(-3.8f, -2.0f, -12.3f),
-  Vector3( 2.4f, -0.4f, -3.5f),
-  Vector3(-1.7f,  3.0f, -7.5f),
-  Vector3( 1.3f, -2.0f, -2.5f),
-  Vector3( 1.5f,  2.0f, -2.5f),
-  Vector3( 1.5f,  0.2f, -1.5f),
-  Vector3(-1.3f,  1.0f, -1.5f)
-};
-
-Vector3 pointLightPositions[] =
-{
-  Vector3( 0.7f,  0.2f,  2.0f),
-  Vector3( 2.3f, -3.3f, -4.0f),
-  Vector3(-4.0f,  2.0f, -12.0f),
-  Vector3( 0.0f,  0.0f, -3.0f)
-};
-
-//-----------------------------------------------
-//    Impl. of Scene class
-//-----------------------------------------------
-
 Scene::Scene()
 {
   m_pLightManager = new LightManager();
 
   m_pRoot.reset(new SceneNode());
 
-  for (int i = 0; i < 10; i++)
-  {
-    pCrates[i].reset(new SceneMeshNode(g_pApp->pCubeMesh));
-    pCrates[i]->Position.X = cratePositions[i].X;
-    pCrates[i]->Position.Y = cratePositions[i].Y;
-    pCrates[i]->Position.Z = cratePositions[i].Z;
-
-    pCrates[i]->bIsLightSource = false;
-
-    //pCrates[i]->Material.Diffuse = g_pTexture;
-    //pCrates[i]->Material.Specular = g_pTexture;
-    //pCrates[i]->Material.Emission = g_pTexture;
-    //pCrates[i]->Material.Shininess = 32.0f;
-
-    m_pRoot->VAddChild(pCrates[i]);
-  }
-
-//  pDirLight.reset(new SceneDirLight({-0.2f, -1.0f, -0.3f}, 
-//    {0.05f, 0.05f, 0.05f}, {0.2f, 0.2f, 0.2f}, {0.25f, 0.25f, 0.25f}));
-//  m_pRoot->VAddChild(pDirLight);
-//  //m_Lights.push_back(pDirLight);
-//
-//  pSpotLight.reset(new SceneSpotLight());
-//  m_pRoot->VAddChild(pSpotLight);
-//  //m_Lights.push_back(pSpotLight);
-
-//  for (int i = 0; i < 4; i++)
-//  {
-//    pPointLights[i].reset(new SceneMeshNode(g_pApp->pCubeMesh));
-//    pPointLights[i]->Position = pointLightPositions[i];
-//    pPointLights[i]->Scale = glm::vec3(0.2f, 0.2f, 0.2f);
-//    pPointLights[i]->bIsLightSource = true;
-//    pPointLights[i]->Material.Diffuse = g_pTextureDiff;
-//    pPointLights[i]->Material.Specular = g_pTextureSpec;
-//    pPointLights[i]->Material.Emission = g_pTextureEmission;
-//    pPointLights[i]->Material.Shininess = 32.0f;
-//    m_pRoot->VAddChild(pPointLights[i]);
-//  }
+  m_pCrate.reset(new SceneMeshNode(g_pApp->pCubeMesh));
+  m_pRoot->VAddChild(m_pCrate);
 }
 
 Scene::~Scene()
 {
   if (m_pLightManager)
     delete m_pLightManager;
+}
+
+void Scene::OnUpdate(f32 deltaTime)
+{
+  m_pRoot->VOnUpdate(deltaTime);
 }
 
 void Scene::OnRender()

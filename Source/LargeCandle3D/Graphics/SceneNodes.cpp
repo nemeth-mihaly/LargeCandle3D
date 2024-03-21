@@ -7,32 +7,45 @@
 #include "LargeCandle3D/Graphics/Scene.h"
 #include "LargeCandle3D/Graphics/CameraController.h"
 
-//-----------------------------------------------
-//    Impl. of SceneNode class
-//-----------------------------------------------
-
 SceneNode::SceneNode()
 {
   m_pParent = NULL;
 
   Color = g_White;
   
-  Scale = Vector3(1.0f);
+  Scale = Vector3(0.9f);
 
   bIsLightSource = false;
+
+  Rotation = 0.0f;
 }
 
 SceneNode::~SceneNode()
 {
 }
 
+void SceneNode::VOnUpdate(f32 deltaTime)
+{
+  for (usize i = 0; i < m_Childs.size(); i++)
+  {
+    std::shared_ptr<ISceneNode>& child = m_Childs[i];
+    child->VOnUpdate(deltaTime);
+  }
+}
+
 void SceneNode::VPreRender()
 {
-  Transform = Matrix4x4::g_Translate(Position);
-  Transform *= Matrix4x4::g_Scale(Scale);
+  Transform = Matrix4x4();
+  Transform *= Matrix4x4::Translate(Position); 
+  Transform *= Matrix4x4::RotateX(Radians(Rotation.X));
+  Transform *= Matrix4x4::RotateY(Radians(Rotation.Y));
+  Transform *= Matrix4x4::RotateZ(Radians(Rotation.Z));
+  Transform *= Matrix4x4::Scale(Scale);
 
   if (m_pParent)
+  {
     Transform *= m_pParent->Transform;
+  }
 }
 
 void SceneNode::VRender(Scene* pScene)
@@ -43,7 +56,7 @@ void SceneNode::VRenderChild(Scene* pScene)
 {
   for (usize i = 0; i < m_Childs.size(); i++)
   {
-    auto child = m_Childs[i];
+    std::shared_ptr<ISceneNode>& child = m_Childs[i];
 
     child->VPreRender();
 
@@ -67,10 +80,6 @@ void SceneNode::VAddChild(const std::shared_ptr<ISceneNode>& pChild)
 void SceneNode::VRemoveChild()
 {
 }
-
-//-----------------------------------------------
-//    Impl. of SceneMeshNode class
-//-----------------------------------------------
 
 SceneMeshNode::SceneMeshNode(const std::shared_ptr<Mesh>& pMesh)
   : m_pMesh(pMesh)
@@ -110,10 +119,6 @@ void SceneMeshNode::VRender(Scene* pScene)
   m_pMesh->OnRender();
 }
 
-//-----------------------------------------------
-//    Impl. of SceneLightNode class
-//-----------------------------------------------
-
 SceneLightNode::SceneLightNode()
 {
 }
@@ -121,10 +126,6 @@ SceneLightNode::SceneLightNode()
 SceneLightNode::~SceneLightNode()
 {
 }
-
-//-----------------------------------------------
-//    Impl. of SceneDirLight class
-//-----------------------------------------------
 
 SceneDirLight::SceneDirLight(const Vector3& direction, const Vector3& ambient, 
       const Vector3& diffuse, const Vector3& specular)
@@ -148,10 +149,6 @@ void SceneDirLight::VRender(Scene* pScene)
   g_pShader->SetUniform3f("u_DirLight.Specular", Specular);
 }
 
-//-----------------------------------------------
-//    Impl. of ScenePointLight class
-//-----------------------------------------------
-
 ScenePointLight::ScenePointLight()
 {
 }
@@ -163,10 +160,6 @@ ScenePointLight::~ScenePointLight()
 void ScenePointLight::VRender(Scene* pScene)
 {
 }
-
-//-----------------------------------------------
-//    Impl. of SceneSpotLight class
-//-----------------------------------------------
 
 SceneSpotLight::SceneSpotLight()
 {
