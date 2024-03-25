@@ -12,25 +12,16 @@
 #include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_opengl3.h"
 
 Application* g_pApp = NULL;
-
-std::shared_ptr<Texture> g_pTexture;
-std::shared_ptr<Texture> g_pTextureDiff;
-std::shared_ptr<Texture> g_pTextureSpec;
-std::shared_ptr<Texture> g_pTextureEmission;
-std::shared_ptr<Texture> g_pWoodFloor;
-
 Shader* g_pShader = NULL;
-
-//
-//  ReadFile()
-//
 
 static char* ReadFile(const char* pName)
 {
   FILE* fp = fopen(pName, "rb");
 
   if (!fp)
+  {
     return NULL;
+  }
 
   fseek(fp, 0L, SEEK_END);
   size_t size = ftell(fp);
@@ -58,22 +49,22 @@ static char* ReadFile(const char* pName)
   return data;
 }
 
-//
-//  LoadGlslResource()
-//
-
 static bool LoadGlslResource(Shader*& shader, const char* pVertName, const char* pFragName)
 {
   char* vertShaderSource = ReadFile(pVertName);
   char* fragShaderSource = ReadFile(pFragName);
 
   if (!(vertShaderSource && fragShaderSource))
+  {
     return false;
+  }
 
   shader = new Shader(vertShaderSource, fragShaderSource);
 
   if (!shader)
+  {
     return false;
+  }
 
   delete[] vertShaderSource;
   delete[] fragShaderSource;
@@ -81,99 +72,89 @@ static bool LoadGlslResource(Shader*& shader, const char* pVertName, const char*
   return true;
 }
 
-//
-//  LoadTextureResource()
-//
-
 static bool LoadTextureResource(std::shared_ptr<Texture>& pTexture, const char* pFileName)
 {
   i32 width, height, numChannels;
   u8* pPixels = stbi_load(pFileName, &width, &height, &numChannels, 0);
 
   if (!pPixels)
+  {
     return false;
+  }
 
   pTexture.reset(new Texture(width, height, numChannels, pPixels));
 
   stbi_image_free(pPixels);
 
   if (!pTexture)
+  {
     return false;
+  }
 
   return true;
 }
 
-//-----------------------------------------------
-//    GLFW event callbacks
-//-----------------------------------------------
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-
-//
-// GlfwKeyCallback()
-//
 
 static void GlfwKeyCallback(GLFWwindow* pWindow, i32 key, i32 scancode, i32 action, i32 mods)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  if (!(pApp && pApp->pView))
+  if (!(pApp && pApp->m_pView))
+  {
     return;
+  }
 
   if (action == GLFW_PRESS)
   {
     if (key == GLFW_KEY_ESCAPE)
+    {
       glfwSetWindowShouldClose(pWindow, GLFW_TRUE);
+    }
 
-    pApp->pView->OnKeyDown(key);
+    pApp->m_pView->OnKeyDown(key);
   }
   else
   if (action == GLFW_RELEASE)
   {
-    pApp->pView->OnKeyUp(key);
+    pApp->m_pView->OnKeyUp(key);
   }
 }
-
-//
-// GlfwMouseMoveCallback()
-//
 
 static void GlfwMouseMoveCallback(GLFWwindow *pWindow, f64 x, f64 y)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  if (!(pApp && pApp->pView))
+  if (!(pApp && pApp->m_pView))
+  {
     return;
+  }
 
-  pApp->pView->OnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
+  pApp->m_pView->OnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
 }
-
-//
-// GlfwMouseButtonCallback()
-//
 
 static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 button, i32 action, i32 mods)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
-  if (!(pApp && pApp->pView))
+  if (!(pApp && pApp->m_pView))
+  {
     return;
+  }
 
   if (action == GLFW_PRESS)
-    pApp->pView->OnMouseButtonDown(button);
+  {
+    pApp->m_pView->OnMouseButtonDown(button);
+  }
   else
   if (action == GLFW_RELEASE)
   {
-    pApp->pView->OnMouseButtonUp(button);
+    pApp->m_pView->OnMouseButtonUp(button);
   }
 }
 
 #pragma GCC diagnostic pop
-
-//-----------------------------------------------
-//    Impl. of Application class
-//-----------------------------------------------
 
 Application::Application()
 {
@@ -188,7 +169,9 @@ Application::~Application()
 bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 {
   if (!glfwInit())
+  {
     return false;
+  }
 
   glfwDefaultWindowHints();
 
@@ -203,7 +186,9 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   m_ScrHeight = scrHeight;
 
   if (!m_pWindow)
+  {
     return false;
+  }
 
   glfwSetWindowUserPointer(m_pWindow, this);
 
@@ -214,7 +199,9 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   glfwMakeContextCurrent(m_pWindow);
 
   if (!gladLoadGL())
+  {
     return false;
+  }
 
 //  i32 flags; 
 //  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
@@ -245,13 +232,6 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
   ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
   ImGui_ImplOpenGL3_Init("#version 460 core");  
 
-//  if (!LoadGlslResource(g_pShader, 
-//    "Data\\Shaders\\Shader.vert.glsl", 
-//    "Data\\Shaders\\Shader.frag.glsl"))
-//  {
-//    return false;
-//  }
-
   if (!LoadGlslResource(g_pShader, 
     "Data\\Shaders\\FlatColor.vert.glsl", 
     "Data\\Shaders\\FlatColor.frag.glsl"))
@@ -259,47 +239,32 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
     return false;
   }
 
-//  u32 pixels = 0xffffffff;
-//  g_pTexture.reset(new Texture(1, 1, 3, &pixels));
-//
-  if (!LoadTextureResource(g_pTextureDiff, 
-    "Data\\Textures\\WoodenContainerDiff.png"))
+//  if (!LoadTextureResource(g_pTextureDiff, 
+//    "Data\\Textures\\WoodenContainerDiff.png"))
+//  {
+//    return false;
+//  }
+
+  m_pPlaneMesh.reset(new Mesh(g_PlaneVertices));
+
+  if (!m_pPlaneMesh)
   {
     return false;
   }
-//
-//  if (!LoadTextureResource(g_pTextureSpec, 
-//    "Data\\Textures\\WoodenContainerSpec.png"))
-//  {
-//    return false;
-//  }
-//
-//  if (!LoadTextureResource(g_pTextureEmission, 
-//    "Data\\Textures\\WoodenContainerEmission.png"))
-//  {
-//    return false;
-//  }
-//
-//  if (!LoadTextureResource(g_pWoodFloor, 
-//    "Data\\Textures\\WoodFloor.png"))
-//  {
-//    return false;
-//  }
 
-  pPlaneMesh.reset(new Mesh(g_PlaneVertices));
+  m_pCubeMesh.reset(new Mesh(g_CubeVertices));
 
-  if (!pPlaneMesh)
+  if (!m_pCubeMesh)
+  {
     return false;
+  }
 
-  pCubeMesh.reset(new Mesh(g_CubeVertices));
+  m_pView.reset(new View());
 
-  if (!pCubeMesh)
+  if (!m_pView)
+  {
     return false;
-
-  pView.reset(new View());
-
-  if (!pView)
-    return false;
+  }
 
 //  std::ifstream f1("Data\\SceneNodes\\J.json");
 //  nlohmann::json data1 = nlohmann::json::parse(f1);
@@ -325,14 +290,20 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
 void Application::Shutdown()
 {
   if (g_pShader)
+  {
     delete g_pShader;
+    g_pShader = NULL;
+  }
 
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
 
   if (m_pWindow)
+  {
     glfwDestroyWindow(m_pWindow);
+    m_pWindow = NULL;
+  }
 
   glfwTerminate();
 }
@@ -348,7 +319,9 @@ void Application::Run()
     previousTime = currentTime;
 
     if (deltaTime > 0.05f)
+    {
       deltaTime = 0.05f;
+    }
 
     glfwPollEvents();
 
@@ -367,7 +340,7 @@ Vector2 Application::GetMousePos()
 
 void Application::Update(f32 deltaTime)
 {
-  pView->OnUpdate(deltaTime);
+  m_pView->OnUpdate(deltaTime);
 }
 
 void Application::Render()
@@ -375,13 +348,13 @@ void Application::Render()
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  pView->OnRender();
+  m_pView->OnRender();
 
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-    pView->OnImGuiRender();
+  m_pView->OnImGuiRender();
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

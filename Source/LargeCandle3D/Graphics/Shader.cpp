@@ -31,11 +31,53 @@ void Shader::Use() const
   glUseProgram(m_ProgramID);
 }
 
+#if USE_GLM
+
 void Shader::SetUniformBool(const char* name, bool value) const
 {
-  //i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
-  //glUniform1i(uniformLocation, static_cast<i32>(value));
-  
+  SetUniform1i(name, static_cast<i32>(value));
+}
+
+void Shader::SetUniform1i(const char* name, i32 value) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform1i(uniformLocation, value);
+}
+
+void Shader::SetUniform1f(const char* name, f32 value) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform1f(uniformLocation, value);
+}
+
+void Shader::SetUniform2f(const char* name, const glm::vec2& values) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform2f(uniformLocation, values.x, values.y);
+}
+
+void Shader::SetUniform3f(const char* name, const glm::vec3& values) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform3f(uniformLocation, values.x, values.y, values.z);
+}
+
+void Shader::SetUniform4f(const char* name, const glm::vec4& values) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniform4f(uniformLocation, values.x, values.y, values.z, values.w);
+}
+
+void Shader::SetUniformMat4x4(const char* name, const glm::mat4& mat4x4) const
+{
+  i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
+  glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(mat4x4));
+}
+
+#else
+
+void Shader::SetUniformBool(const char* name, bool value) const
+{
   SetUniform1i(name, static_cast<i32>(value));
 }
 
@@ -74,6 +116,8 @@ void Shader::SetUniformMat4x4(const char* name, const Matrix4x4& mat4x4) const
   i32 uniformLocation = glGetUniformLocation(m_ProgramID, name);
   glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, mat4x4.AsValuePtr());
 }
+
+#endif
 
 u32 Shader::Compile(const char* source, u32 type) const
 {

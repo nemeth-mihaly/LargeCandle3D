@@ -55,10 +55,6 @@ std::vector<Vertex3D> g_CubeVertices =
   {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, { 0.0f,  1.0f}}
 };
 
-//-----------------------------------------------
-//    Impl. of Mesh class
-//-----------------------------------------------
-
 Mesh::Mesh(const std::vector<Vertex3D>& vertices)
   : m_Vertices(vertices)
 {

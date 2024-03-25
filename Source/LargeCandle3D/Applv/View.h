@@ -3,26 +3,16 @@
 #include <memory>
 
 #include "LargeCandle3D/Core/PrimTypes.h"
-
-#include "LargeCandle3D/Graphics/Camera.h"
 #include "LargeCandle3D/Graphics/CameraController.h"
 #include "LargeCandle3D/Graphics/Scene.h"
-
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
-//
-// class View
-//
 
 class View
 {
   friend class Application;
 
   public:
-    IKeyboardHandler* pKeyboardHandler; 
-    IMouseHandler* pMouseHandler;
+    IKeyboardHandler* m_pKeyboardHandler; 
+    IMouseHandler* m_pMouseHandler;
 
     View();
     ~View();
@@ -31,10 +21,6 @@ class View
     
     void OnRender();
     void OnImGuiRender();
-
-    //
-    // GLFW event callbacks
-    //
 
     bool OnKeyDown(i32 key);
     bool OnKeyUp(i32 key);
@@ -46,6 +32,6 @@ class View
   private:
     std::shared_ptr<Scene> m_pScene;
 
-    std::shared_ptr<Camera> m_pCamera;
+    std::shared_ptr<CameraNode> m_pCamera;
     CameraController* m_pCameraController;
 };

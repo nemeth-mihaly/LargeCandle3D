@@ -7,13 +7,13 @@
 
 #include "LargeCandle3D/Graphics/SceneNodes.h"
 #include "LargeCandle3D/Graphics/Light.h"
-#include "LargeCandle3D/Graphics/Camera.h"
 
 class Scene
 {
   public:
-    std::shared_ptr<Camera> pCamera;
-    std::shared_ptr<SceneMeshNode> m_pCrate;
+    std::shared_ptr<CameraNode> m_pCameraNode;
+
+    std::shared_ptr<SceneMeshNode> m_pCrates[3];
 
     LightManager* m_pLightManager;
 

@@ -2,10 +2,6 @@
 
 #include "LargeCandle3D/Graphics/Scene.h"
 
-//-----------------------------------------------
-//    Impl. of LightManager class
-//-----------------------------------------------
-
 LightManager::LightManager()
 {
 }

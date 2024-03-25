@@ -2,14 +2,6 @@
 
 #include "LargeCandle3D/Core/PrimTypes.h"
 
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
-//
-// Interface class IKeyboardHandler
-//
-
 class IKeyboardHandler 
 {
   public:
@@ -18,10 +10,6 @@ class IKeyboardHandler
     virtual bool VOnKeyDown(i32 key) = 0;
     virtual bool VOnKeyUp(i32 key) = 0;
 };
-
-//
-// Interface class IMouseHandler
-//
 
 class IMouseHandler 
 {

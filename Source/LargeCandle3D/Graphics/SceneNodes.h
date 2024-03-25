@@ -38,6 +38,15 @@ class SceneNode : public ISceneNode
     std::vector<std::shared_ptr<ISceneNode>> m_Childs;
 
   public:
+#if USE_GLM
+    glm::vec3 Color;
+
+    glm::vec3 Position;
+    glm::vec3 Rotation;
+    glm::vec3 Scale;
+
+    glm::mat4 Transform;
+#else
     Vector3 Color;
 
     Vector3 Position;
@@ -45,6 +54,7 @@ class SceneNode : public ISceneNode
     Vector3 Scale;
 
     Matrix4x4 Transform;
+#endif
 
     bool bIsLightSource;
     Material Material;
@@ -78,54 +88,108 @@ class SceneMeshNode : public SceneNode
 class SceneLightNode : public SceneNode
 {
   public:
+#if USE_GLM
+
+    glm::vec3   Ambient;
+    glm::vec3   Diffuse;
+    glm::vec3   Specular;
+    glm::vec3   Emissive;
+
+#else
+
     Vector3   Ambient;
     Vector3   Diffuse;
     Vector3   Specular;
     Vector3   Emissive;
 
+#endif
+
     SceneLightNode();
     ~SceneLightNode();
 };
 
-class SceneDirLight : public SceneLightNode
+//class SceneDirLight : public SceneLightNode
+//{
+//  public:
+//#if USE_GLM
+//
+//    glm::vec3   Direction;
+//
+//#else
+//
+//    Vector3   Direction;
+//
+//#endif
+//
+//    SceneDirLight(const Vector3& direction, const Vector3& ambient, 
+//      const Vector3& diffuse, const Vector3& specular);
+//    ~SceneDirLight();
+//
+//    virtual void VRender(Scene* pScene);
+//};
+//
+//class ScenePointLight : public SceneLightNode
+//{
+//  public:
+//    f32   ConstantAtten;
+//    f32   LinearAtten;
+//    f32   QuadraticAtten;
+//
+//    ScenePointLight();
+//    ~ScenePointLight();
+//
+//    virtual void VRender(Scene* pScene);
+//};
+//
+//class SceneSpotLight : public SceneLightNode
+//{
+//  public:
+//    Vector3       Direction;
+//
+//    f32           CutOffAngle;
+//    f32           OuterCutOffAngle;
+//
+//    f32           ConstantAtten;
+//    f32           LinearAtten;
+//    f32           QuadraticAtten;
+//
+//    SceneSpotLight();
+//    ~SceneSpotLight();
+//
+//    virtual void VRender(Scene* pScene);
+//};
+
+class CameraNode : public SceneNode
 {
+  friend class CameraController;
+
   public:
-    Vector3   Direction;
+    CameraNode() 
+    {
+      Position.z = 5.0f;
+    }
 
-    SceneDirLight(const Vector3& direction, const Vector3& ambient, 
-      const Vector3& diffuse, const Vector3& specular);
-    ~SceneDirLight();
+    ~CameraNode() {}
 
-    virtual void VRender(Scene* pScene);
-};
+    void VOnUpdate(f32 deltaTime)
+    {
 
-class ScenePointLight : public SceneLightNode
-{
-  public:
-    f32   ConstantAtten;
-    f32   LinearAtten;
-    f32   QuadraticAtten;
+    }
 
-    ScenePointLight();
-    ~ScenePointLight();
+    void VRender(Scene* pScene);
 
-    virtual void VRender(Scene* pScene);
-};
+#if USE_GLM
 
-class SceneSpotLight : public SceneLightNode
-{
-  public:
-    Vector3       Direction;
+    glm::mat4 m_Projection;
+    glm::mat4 m_View;
+    glm::vec3 m_Forward = glm::vec3(0.0f, 0.0f, -1.0f);
 
-    f32           CutOffAngle;
-    f32           OuterCutOffAngle;
+#else
 
-    f32           ConstantAtten;
-    f32           LinearAtten;
-    f32           QuadraticAtten;
+    Matrix4x4 m_Projection;
+    Matrix4x4 m_View;
+    Vector3 m_Center;
 
-    SceneSpotLight();
-    ~SceneSpotLight();
+#endif
 
-    virtual void VRender(Scene* pScene);
 };

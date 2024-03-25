@@ -4,32 +4,31 @@
 
 #include "LargeCandle3D/Vendor/imgui/imgui.h"
 
-//-----------------------------------------------
-//    Impl. of View class
-//-----------------------------------------------
-
 View::View()
 {
   m_pScene.reset(new Scene());
 
-  m_pCamera.reset(new Camera(g_pApp->GetScrWidth(), g_pApp->GetScrHeight()));
-  m_pScene->pCamera = m_pCamera;
+  m_pCamera.reset(new CameraNode());
+  m_pScene->m_pCameraNode = m_pCamera;
 
   m_pCameraController = new CameraController(m_pCamera);
 
-  pKeyboardHandler = m_pCameraController;
-  pMouseHandler = m_pCameraController;
+  m_pKeyboardHandler = m_pCameraController;
+  m_pMouseHandler = m_pCameraController;
 }
 
 View::~View()
 {
   if (m_pCameraController)
+  {
     delete m_pCameraController;
+    m_pCameraController = NULL;
+  }
 }
 
 void View::OnUpdate(f32 deltaTime)
 {
-  m_pCamera->OnUpdate(deltaTime);
+  //m_pCamera->OnUpdate(deltaTime);
   m_pCameraController->OnUpdate(deltaTime);
   m_pScene->OnUpdate(deltaTime);
 }
@@ -66,6 +65,9 @@ void View::OnImGuiRender()
       //ImGui::SliderFloat3("Position##2", &node->Position[0], -10.0f, 10.0f);
     }
 
+    {
+    }
+
     ImGuiIO& io = ImGui::GetIO(); 
     ImGui::Text("Frame rate average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
   ImGui::End();
@@ -73,46 +75,56 @@ void View::OnImGuiRender()
   ImGui::ShowDemoWindow();
 }
 
-//
-// Impl. of GLFW event callbacks
-//
-
 bool View::OnKeyDown(i32 key)
 {
-  if (pKeyboardHandler)
-    pKeyboardHandler->VOnKeyDown(key);
+  if (m_pKeyboardHandler)
+  {
+    m_pKeyboardHandler->VOnKeyDown(key);
+  }
+
+  if (key == GLFW_KEY_SPACE)
+  {
+  }
 
   return true;
 }
 
 bool View::OnKeyUp(i32 key)
 {
-  if (pKeyboardHandler)
-    pKeyboardHandler->VOnKeyUp(key);
+  if (m_pKeyboardHandler)
+  {
+    m_pKeyboardHandler->VOnKeyUp(key);
+  }
 
   return true;
 }
 
 bool View::OnMouseMove(f32 x, f32 y)
 {
-  if (pMouseHandler)
-    pMouseHandler->VOnMouseMove(x, y);
+  if (m_pMouseHandler)
+  {
+    m_pMouseHandler->VOnMouseMove(x, y);
+  }
 
   return true;
 }
 
 bool View::OnMouseButtonDown(i32 button)
 {
-  if (pMouseHandler)
-    pMouseHandler->VOnMouseButtonDown(button);
+  if (m_pMouseHandler)
+  {
+    m_pMouseHandler->VOnMouseButtonDown(button);
+  }
 
   return true;
 }
 
 bool View::OnMouseButtonUp(i32 button)
 {
-  if (pMouseHandler)
-    pMouseHandler->VOnMouseButtonUp(button);
+  if (m_pMouseHandler)
+  {
+    m_pMouseHandler->VOnMouseButtonUp(button);
+  }
 
   return true;
 }

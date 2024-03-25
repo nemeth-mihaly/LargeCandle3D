@@ -5,18 +5,9 @@
 #include <memory>
 
 #include "LargeCandle3D/Core/PrimTypes.h"
-
 #include "LargeCandle3D/Graphics/SceneNodes.h"
 
 class Scene;
-
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
-//
-//  class LightManager
-//
 
 class LightManager
 {

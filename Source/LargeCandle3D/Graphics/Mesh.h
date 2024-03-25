@@ -5,25 +5,12 @@
 #include "LargeCandle3D/Vendor/glad/glad.h"
 
 #include "LargeCandle3D/Core/PrimTypes.h"
-
 #include "LargeCandle3D/Graphics/Geometry.h"
-
-//-----------------------------------------------
-//    Forward declarations
-//-----------------------------------------------
 
 class Vertex3D;
 
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
 extern std::vector<Vertex3D> g_PlaneVertices;
 extern std::vector<Vertex3D> g_CubeVertices;
-
-//
-// struct Vertex3D
-//
 
 struct Vertex3D
 {
@@ -34,10 +21,6 @@ struct Vertex3D
   Vertex3D(const Vector3& position, const Vector3& normal, const Vector2& texCoords) 
     : Position(position), Normal(normal), TexCoords(texCoords) {}
 };
-
-//
-// class Mesh
-//
 
 class Mesh
 {

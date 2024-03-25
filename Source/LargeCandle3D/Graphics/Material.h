@@ -3,13 +3,23 @@
 #include <memory>
 
 #include "LargeCandle3D/Core/PrimTypes.h"
-
 #include "LargeCandle3D/Graphics/Geometry.h"
 #include "LargeCandle3D/Graphics/Texture.h"
 
-//-----------------------------------------------
-//
-//-----------------------------------------------
+#if USE_GLM
+
+extern  glm::vec3  g_White;
+extern  glm::vec3  g_Black;
+extern  glm::vec3  g_Cyan;
+extern  glm::vec3  g_Red;
+extern  glm::vec3  g_Green;
+extern  glm::vec3  g_Blue;
+extern  glm::vec3  g_Yellow;
+extern  glm::vec3  g_Gray40;
+extern  glm::vec3  g_Gray25;
+extern  glm::vec3  g_Gray65;
+
+#else
 
 extern  Vector3  g_White;
 extern  Vector3  g_Black;
@@ -22,16 +32,24 @@ extern  Vector3  g_Gray40;
 extern  Vector3  g_Gray25;
 extern  Vector3  g_Gray65;
 
-//
-// class Material
-//
+#endif
 
 class Material
 {
   public:
+#if USE_GLM
+
+    glm::vec3     Ambient;
+    glm::vec3     Diffuse;
+    glm::vec3     Specular;
+
+#else
+
     Vector3     Ambient;
     Vector3     Diffuse;
     Vector3     Specular;
+
+#endif
 
     f32           Shininess;
 

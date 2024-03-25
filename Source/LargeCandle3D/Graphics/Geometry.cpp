@@ -1,18 +1,13 @@
 #include "LargeCandle3D/Graphics/Geometry.h"
 
-//Vector3 g_Forward(0.0f, 0.0f, -1.0f);
-//Vector3 g_Right(1.0f, 0.0f, 0.0f);
-//Vector3 g_Up(0.0f, 1.0f, 0.0f);
+#include <string.h>
+#include <iostream>
 
 f32 Radians(f32 degrees)
 {
   constexpr f32 PI = 3.1415926535f;
   return degrees * PI / 180.0f;
 }
-
-//-----------------------------------------------
-//    Impl. of Vector2 class
-//-----------------------------------------------
 
 Vector2::Vector2()
 {
@@ -209,10 +204,6 @@ f32 Vector2::Dot(const Vector2& other) const
   return (X * other.X) + (Y * other.Y);
 }
 
-//-----------------------------------------------
-//    Impl. of Vector3 class
-//-----------------------------------------------
-
 Vector3::Vector3()
 {
   X = 0.0f;
@@ -313,6 +304,11 @@ Vector3 operator/(Vector3 left, f32 value)
 const f32* Vector3::AsValuePtr() const
 {
   return reinterpret_cast<const f32*>(&X);
+}
+
+f32* Vector3::AsValuePtr()
+{
+  return reinterpret_cast<f32*>(&X);
 }
 
 Vector3& Vector3::Add(const Vector3& other) 
@@ -443,10 +439,6 @@ Vector3 Vector3::Up()
 {
   return Vector3(0.0f, 1.0f, 0.0f);
 }
-
-//-----------------------------------------------
-//    Impl. of Vector4 class
-//-----------------------------------------------
 
 Vector4::Vector4()
 {
@@ -665,10 +657,6 @@ f32 Vector4::Dot(const Vector4& other) const
   return (X * other.X) + (Y * other.Y) + (Z * other.Z) + (W * other.W);
 }
 
-//-----------------------------------------------
-//    Impl. of Quaternion class
-//-----------------------------------------------
-
 Quaternion::Quaternion()
 {
   X = 0.0f;
@@ -684,17 +672,37 @@ Quaternion::Quaternion(f32 x, f32 y, f32 z, f32 w)
 
 Quaternion::Quaternion(f32 angle, const Vector3& axis)
 {
-  f32 s = sinf(angle * 0.5f);
+  f32 sinHalfAngle = sinf(angle * 0.5f);
 
-  X = axis.X * s;
-  Y = axis.Y * s;
-  Z = axis.Z * s;
-  W = cos(s * 0.5f);
+  X = axis.X * sinHalfAngle;
+  Y = axis.Y * sinHalfAngle;
+  Z = axis.Z * sinHalfAngle;
+  W = cos(sinHalfAngle * 0.5f);
 }
 
-//-----------------------------------------------
-//    Impl. of Matrix4x4 class
-//-----------------------------------------------
+Quaternion Quaternion::Conjugate() const
+{
+  Quaternion resultQuat(-X, -Y, -Z, W);
+  return resultQuat;
+}
+
+f32 Quaternion::Length() const
+{
+  return sqrtf((X * X) + (Y * Y) + (Z * Z) + (W * W));
+}
+
+Quaternion Quaternion::Normalize() const
+{
+  f32 length = Length();
+
+  Quaternion resultQuat;
+  resultQuat.X = X / length;
+  resultQuat.Y = Y / length;
+  resultQuat.Z = Z / length;
+  resultQuat.W = W / length;
+
+  return resultQuat;
+}
 
 Matrix4x4::Matrix4x4()
 {
@@ -708,7 +716,7 @@ Matrix4x4::Matrix4x4()
 
 Matrix4x4::Matrix4x4(f32 data[4][4])
 {
-  memcpy(&Data[0][0], &data[0][0], sizeof(data));
+  memcpy(&Data[0][0], &data[0][0], 16 * sizeof(f32));
 }
 
 Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& other)
@@ -764,27 +772,25 @@ Matrix4x4 Matrix4x4::Perspective(f32 fovY, f32 width, f32 height, f32 zNear, f32
   return resultMatrix;
 }
 
-Matrix4x4 Matrix4x4::LookAt(const Vector3& position, const Vector3& target, const Vector3& up)
+Matrix4x4 Matrix4x4::LookAt(const Vector3& eye, const Vector3& center, const Vector3& up)
 {
-  const Vector3 f(Vector3(target - position).Normalize());
-  const Vector3 r(f.Cross(up).Normalize());
-  const Vector3 u(r.Cross(f));
+  const Vector3 FORWARD(Vector3(center - eye).Normalize());
+  const Vector3 RIGHT(FORWARD.Cross(up).Normalize());
+  const Vector3 UP(RIGHT.Cross(FORWARD));
 
   Matrix4x4 resultMatrix;
-  resultMatrix.Data[0][0] = r.X;
-  resultMatrix.Data[0][1] = r.Y;
-  resultMatrix.Data[0][2] = r.Z;
-  resultMatrix.Data[1][0] = u.X;
-  resultMatrix.Data[1][1] = u.Y;
-  resultMatrix.Data[1][2] = u.Z;
-  resultMatrix.Data[2][0] = -f.X;
-  resultMatrix.Data[2][1] = -f.Y;
-  resultMatrix.Data[2][2] = -f.Z;
-
-  Matrix4x4 t = Matrix4x4::Translate(position);
-  resultMatrix.Data[3][0] = -t.Data[3][0];
-  resultMatrix.Data[3][1] = -t.Data[3][1];
-  resultMatrix.Data[3][2] = -t.Data[3][2];
+  resultMatrix.Data[0][0] = RIGHT.X;
+  resultMatrix.Data[0][1] = RIGHT.Y;
+  resultMatrix.Data[0][2] = RIGHT.Z;
+  resultMatrix.Data[1][0] = UP.X;
+  resultMatrix.Data[1][1] = UP.Y;
+  resultMatrix.Data[1][2] = UP.Z;
+  resultMatrix.Data[2][0] = -FORWARD.X;
+  resultMatrix.Data[2][1] = -FORWARD.Y;
+  resultMatrix.Data[2][2] = -FORWARD.Z;
+  resultMatrix.Data[3][0] = -eye.Dot(RIGHT);
+  resultMatrix.Data[3][1] = -eye.Dot(UP);
+  resultMatrix.Data[3][2] = eye.Dot(FORWARD);
 
   return resultMatrix;
 }

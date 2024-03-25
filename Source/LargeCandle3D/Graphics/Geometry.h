@@ -1,31 +1,19 @@
 #pragma once
 
-#include <string.h>
 #include <cmath>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
+#define USE_GLM 1
 
 #include "LargeCandle3D/Core/PrimTypes.h"
 
-//-----------------------------------------------
-//    Forward declarations
-//-----------------------------------------------
-
-class Vector2;
-class Vector3;
-class Vector4;
-
-//-----------------------------------------------
-//
-//-----------------------------------------------
-
-//extern Vector3 g_Forward;
-//extern Vector3 g_Right;
-//extern Vector3 g_Up;
-
 extern f32 Radians(f32 degrees);
-
-//
-//  Vector2f
-//
 
 class Vector2
 {
@@ -76,10 +64,6 @@ class Vector2
     f32 Dot(const Vector2& other) const;
 };
 
-//
-//  Vector3
-//
-
 class Vector3
 {
   public:
@@ -112,6 +96,7 @@ class Vector3
     friend Vector3 operator/(Vector3 left, f32 value);
 
     const f32* AsValuePtr() const;
+    f32* AsValuePtr();
 
     Vector3& Add(const Vector3& other);
     Vector3& Subtract(const Vector3& other);
@@ -134,10 +119,6 @@ class Vector3
     static Vector3 Right();
     static Vector3 Up();
 };
-
-//
-//  Vector4
-//
 
 class Vector4
 {
@@ -190,10 +171,6 @@ class Vector4
     f32 Dot(const Vector4& other) const;
 };
 
-//
-//  Quaternion
-//
-
 class Quaternion
 {
   public:
@@ -204,13 +181,15 @@ class Quaternion
 
     Quaternion();
     Quaternion(f32 x, f32 y, f32 z, f32 w);
-    // Builds a quaternion from an angle (radians) and a normalized axis.
-    Quaternion(f32 angle, const Vector3& axis); 
-};
 
-//
-//  Matrix4x4
-//
+    // Builds a quaternion from an angle in radians and a normalized axis.
+    Quaternion(f32 angle, const Vector3& axis); 
+
+    Quaternion Conjugate() const;
+
+    f32 Length() const;
+    Quaternion Normalize() const;
+};
 
 class Matrix4x4
 {
@@ -228,7 +207,7 @@ class Matrix4x4
     Matrix4x4& Multiply(const Matrix4x4& other);
 
     static Matrix4x4 Perspective(f32 fovY, f32 width, f32 height, f32 zNear, f32 zFar);
-    static Matrix4x4 LookAt(const Vector3& position, const Vector3& target, const Vector3& up);
+    static Matrix4x4 LookAt(const Vector3& eye, const Vector3& center, const Vector3& up);
 
     static Matrix4x4 Translate(const Vector3& translation);
 
