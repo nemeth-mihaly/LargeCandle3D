@@ -1,6 +1,14 @@
-#include "LargeCandle3D/Graphics/Light.h"
+#include "LargeCandle3D/Graphics/Light.hpp"
 
-#include "LargeCandle3D/Graphics/Scene.h"
+#include "LargeCandle3D/Graphics/Scene.hpp"
+
+/*-------------------------------------------------------------------------
+ *  Light.cpp
+ *-----------------------------------------------------------------------*/
+
+/*
+ *  Impl. of LightManager
+ */
 
 LightManager::LightManager()
 {

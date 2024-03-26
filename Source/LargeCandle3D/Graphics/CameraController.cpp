@@ -1,12 +1,15 @@
-#include "LargeCandle3D/Graphics/CameraController.h"
+#include "LargeCandle3D/Graphics/CameraController.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "LargeCandle3D/Applv/Application.hpp"
+#include "Maths/Quaternion.hpp"
 
-#include "LargeCandle3D/Applv/Application.h"
+/*-------------------------------------------------------------------------
+ *  CameraController.hpp
+ *-----------------------------------------------------------------------*/
+
+/*
+ *  Impl. of CameraController
+ */
 
 CameraController::CameraController(const std::shared_ptr<CameraNode>& pCamera)
   : m_pCamera(pCamera)
@@ -21,7 +24,7 @@ CameraController::CameraController(const std::shared_ptr<CameraNode>& pCamera)
   m_PrevMousePos = m_MousePos;
 }
 
-void CameraController::OnUpdate(f32 deltaTime)
+void CameraController::OnUpdate(float deltaTime)
 {
   Vector2 deltaMousePos(Vector2(m_MousePos - m_PrevMousePos) * 0.003f);
   m_PrevMousePos = m_MousePos;
@@ -34,59 +37,58 @@ void CameraController::OnUpdate(f32 deltaTime)
 
   glfwSetInputMode(g_pApp->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-  const f32 SPEED = 3.0f;
+  const float speed = 2.0f;
 
   if (m_bKeysDown[GLFW_KEY_W])
   {
-    m_pCamera->Position += m_pCamera->m_Forward * SPEED * deltaTime;
+    m_pCamera->Position += m_pCamera->m_Orientation * speed * deltaTime;
   }
   else
   if (m_bKeysDown[GLFW_KEY_S])
   {
-    m_pCamera->Position -= m_pCamera->m_Forward * SPEED * deltaTime;
+    m_pCamera->Position -= m_pCamera->m_Orientation * speed * deltaTime;
   }
 
-  glm::vec3 right = glm::cross(m_pCamera->m_Forward, glm::vec3(0.0f, 1.0f, 0.0f));
-//  Vector3 right = m_pCamera->m_Forward.Cross(Vector3::Up());
+  Vector3 right = m_pCamera->m_Orientation.Cross(Vector3(0.0f, 1.0f, 0.0f));
 
   if (m_bKeysDown[GLFW_KEY_A])
   {
-    m_pCamera->Position -= right * SPEED * deltaTime;
+    m_pCamera->Position -= right * speed * deltaTime;
   }
   else
   if (m_bKeysDown[GLFW_KEY_D])
   {
-    m_pCamera->Position += right * SPEED * deltaTime;
+    m_pCamera->Position += right * speed * deltaTime;
   }
 
   if (m_bKeysDown[GLFW_KEY_LEFT_SHIFT])
   {
-    m_pCamera->Position += glm::vec3(0.0f, 1.0f, 0.0f) * SPEED * deltaTime;
+    m_pCamera->Position += Vector3(0.0f, 1.0f, 0.0f) * speed * deltaTime;
   }
   else
   if (m_bKeysDown[GLFW_KEY_LEFT_CONTROL])
   {
-    m_pCamera->Position -= glm::vec3(0.0f, 1.0f, 0.0f) * SPEED * deltaTime;
+    m_pCamera->Position -= Vector3(0.0f, 1.0f, 0.0f) * speed * deltaTime;
   }
 
   bool isMoved = false;
   
   if (!(deltaMousePos.X == 0.0f && deltaMousePos.Y == 0.0f))
   {
-    constexpr f32 ROTATION_SPEED = 0.3f;
+    constexpr float ROTATION_speed = 0.3f;
 
-    f32 pitch = deltaMousePos.Y * ROTATION_SPEED;
-    f32 yaw = deltaMousePos.X * ROTATION_SPEED;
+    float pitch = deltaMousePos.Y * ROTATION_speed;
+    float yaw = deltaMousePos.X * ROTATION_speed;
 
-    glm::quat q = glm::normalize(glm::cross(glm::angleAxis(-pitch, glm::vec3(right.x, right.y, right.z)), 
-      glm::angleAxis(-yaw, glm::vec3(0.0f, 1.0f, 0.0f))));
-    
-    glm::vec3 forward = glm::rotate(q, glm::vec3(m_pCamera->m_Forward.x, m_pCamera->m_Forward.y, m_pCamera->m_Forward.z));
-    m_pCamera->m_Forward = glm::vec3(forward.x, forward.y, forward.z);
+    Quaternion q(
+      Quaternion(Quaternion(-pitch, right) 
+        * Quaternion(-yaw, Vector3(0.0f, 1.0f, 0.0f)).Normalize()));
+
+    m_pCamera->m_Orientation = q * m_pCamera->m_Orientation;
   }
 }
 
-bool CameraController::VOnKeyDown(i32 key)
+bool CameraController::VOnKeyDown(int key)
 {
   if (!(0 <= key && key <= GLFW_KEY_LAST))
   {
@@ -98,7 +100,7 @@ bool CameraController::VOnKeyDown(i32 key)
   return true;
 }
 
-bool CameraController::VOnKeyUp(i32 key)
+bool CameraController::VOnKeyUp(int key)
 {
   if (!(0 <= key && key <= GLFW_KEY_LAST))
   {
@@ -110,7 +112,7 @@ bool CameraController::VOnKeyUp(i32 key)
   return true;
 }
 
-bool CameraController::VOnMouseMove(f32 x, f32 y)
+bool CameraController::VOnMouseMove(float x, float y)
 {
   m_MousePos.X = x;
   m_MousePos.Y = y;
@@ -118,7 +120,7 @@ bool CameraController::VOnMouseMove(f32 x, f32 y)
   return true;
 }
 
-bool CameraController::VOnMouseButtonDown(i32 button)
+bool CameraController::VOnMouseButtonDown(int button)
 {
   if (!(0 <= button && button <= GLFW_MOUSE_BUTTON_LAST))
   {
@@ -130,7 +132,7 @@ bool CameraController::VOnMouseButtonDown(i32 button)
   return true;
 }
 
-bool CameraController::VOnMouseButtonUp(i32 button)
+bool CameraController::VOnMouseButtonUp(int button)
 {
   if (!(0 <= button && button <= GLFW_MOUSE_BUTTON_LAST))
   {

@@ -1,15 +1,22 @@
-#include "LargeCandle3D/Applv/View.h"
+#include "LargeCandle3D/Applv/View.hpp"
 
-#include "LargeCandle3D/Applv/Application.h"
+#include "LargeCandle3D/Applv/Application.hpp"
+#include "Vendor/imgui/imgui.h"
 
-#include "LargeCandle3D/Vendor/imgui/imgui.h"
+/*-------------------------------------------------------------------------
+ *  View.cpp
+ *-----------------------------------------------------------------------*/
+
+/*
+ *  Impl. of View
+ */
 
 View::View()
 {
   m_pScene.reset(new Scene());
 
   m_pCamera.reset(new CameraNode());
-  m_pScene->m_pCameraNode = m_pCamera;
+  m_pScene->SetCamera(m_pCamera);
 
   m_pCameraController = new CameraController(m_pCamera);
 
@@ -26,9 +33,8 @@ View::~View()
   }
 }
 
-void View::OnUpdate(f32 deltaTime)
+void View::OnUpdate(float deltaTime)
 {
-  //m_pCamera->OnUpdate(deltaTime);
   m_pCameraController->OnUpdate(deltaTime);
   m_pScene->OnUpdate(deltaTime);
 }
@@ -75,7 +81,7 @@ void View::OnImGuiRender()
   ImGui::ShowDemoWindow();
 }
 
-bool View::OnKeyDown(i32 key)
+bool View::OnKeyDown(int key)
 {
   if (m_pKeyboardHandler)
   {
@@ -89,7 +95,7 @@ bool View::OnKeyDown(i32 key)
   return true;
 }
 
-bool View::OnKeyUp(i32 key)
+bool View::OnKeyUp(int key)
 {
   if (m_pKeyboardHandler)
   {
@@ -99,7 +105,7 @@ bool View::OnKeyUp(i32 key)
   return true;
 }
 
-bool View::OnMouseMove(f32 x, f32 y)
+bool View::OnMouseMove(float x, float y)
 {
   if (m_pMouseHandler)
   {
@@ -109,7 +115,7 @@ bool View::OnMouseMove(f32 x, f32 y)
   return true;
 }
 
-bool View::OnMouseButtonDown(i32 button)
+bool View::OnMouseButtonDown(int button)
 {
   if (m_pMouseHandler)
   {
@@ -119,7 +125,7 @@ bool View::OnMouseButtonDown(i32 button)
   return true;
 }
 
-bool View::OnMouseButtonUp(i32 button)
+bool View::OnMouseButtonUp(int button)
 {
   if (m_pMouseHandler)
   {

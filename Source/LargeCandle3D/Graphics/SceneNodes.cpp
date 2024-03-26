@@ -1,30 +1,26 @@
-#include "LargeCandle3D/Graphics/SceneNodes.h"
+#include "LargeCandle3D/Graphics/SceneNodes.hpp"
 
 #include <stdio.h>
+#include "LargeCandle3D/Applv/Application.hpp"
+#include "LargeCandle3D/Graphics/Scene.hpp"
+#include "LargeCandle3D/Graphics/CameraController.hpp"
 
-#include "LargeCandle3D/Applv/Application.h"
-#include "LargeCandle3D/Graphics/Scene.h"
-#include "LargeCandle3D/Graphics/CameraController.h"
+/*-------------------------------------------------------------------------
+ *  SceneNodes.cpp
+ *-----------------------------------------------------------------------*/
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/*
+ *  Impl. of SceneNode
+ */
+
 SceneNode::SceneNode()
 {
   m_pParent = NULL;
-
-  Color = g_White;
-
-#if USE_GLM
-
-  Scale = glm::vec3(0.9f);
-
-#else
-
-  Scale = Vector3(0.9f);
-
-#endif
-
+  Color = Vector3(1.0f);
+  Size = Vector3(0.2f);
   bIsLightSource = false;
 
   //Rotation = 0.0f;
@@ -34,9 +30,9 @@ SceneNode::~SceneNode()
 {
 }
 
-void SceneNode::VOnUpdate(f32 deltaTime)
+void SceneNode::VOnUpdate(float deltaTime)
 {
-  for (usize i = 0; i < m_Childs.size(); i++)
+  for (size_t i = 0; i < m_Childs.size(); i++)
   {
     std::shared_ptr<ISceneNode>& child = m_Childs[i];
     child->VOnUpdate(deltaTime);
@@ -45,22 +41,12 @@ void SceneNode::VOnUpdate(f32 deltaTime)
 
 void SceneNode::VPreRender()
 {
-#if USE_GLM
-  Transform = glm::mat4(1.0f);
-  Transform *= glm::translate(glm::mat4(1.0f), Position);
-  Transform *= glm::scale(glm::mat4(1.0f), Scale);
-#else
-  Transform = Matrix4x4();
-  Transform *= Matrix4x4::Translate(Position); 
-  Transform *= Matrix4x4::RotateX(Radians(Rotation.X));
-  Transform *= Matrix4x4::RotateY(Radians(Rotation.Y));
-  Transform *= Matrix4x4::RotateZ(Radians(Rotation.Z));
-  Transform *= Matrix4x4::Scale(Scale);
-#endif
+  Transform = Translate(Position) 
+    * Scale(Size);
 
   if (m_pParent)
   {
-    Transform *= m_pParent->Transform;
+    //Transform *= m_pParent->Transform;
   }
 }
 
@@ -70,7 +56,7 @@ void SceneNode::VRender(Scene* pScene)
 
 void SceneNode::VRenderChild(Scene* pScene)
 {
-  for (usize i = 0; i < m_Childs.size(); i++)
+  for (size_t i = 0; i < m_Childs.size(); i++)
   {
     std::shared_ptr<ISceneNode>& child = m_Childs[i];
 
@@ -97,6 +83,10 @@ void SceneNode::VRemoveChild()
 {
 }
 
+/*
+ *  Impl. of SceneMeshNode
+ */
+
 SceneMeshNode::SceneMeshNode(const std::shared_ptr<Mesh>& pMesh)
   : m_pMesh(pMesh)
 {
@@ -108,7 +98,9 @@ SceneMeshNode::~SceneMeshNode()
 
 void SceneMeshNode::VRender(Scene* pScene)
 {
-  g_pShader->SetUniformMat4x4("u_Model", Transform);
+  g_pShader->SetUniformMat4x4("u_ViewProjection", pScene->GetCamera()->GetViewProjection().Data);
+
+  g_pShader->SetUniformMat4x4("u_Model", Transform.Data);
 
   //g_pShader->SetUniformBool("u_bIsLightSource", bIsLightSource);
 
@@ -134,6 +126,10 @@ void SceneMeshNode::VRender(Scene* pScene)
 
   m_pMesh->OnRender();
 }
+
+/*
+ *  Impl. of SceneLightNode
+ */
 
 SceneLightNode::SceneLightNode()
 {
@@ -199,9 +195,22 @@ SceneLightNode::~SceneLightNode()
 //  //g_pShader->SetUniform1f("u_SpotLight.Quadratic", 0.032f);
 //}
 
-void CameraNode::VRender(Scene* pScene)
+/*
+ *  Impl. of CameraNode
+ */
+
+CameraNode::CameraNode() 
 {
-  g_pShader->SetUniformMat4x4("u_Model", Transform);
+  Position.Z = 5.0f;
+  m_Orientation.Z = -1.0f;
+}
+
+Matrix4x4 CameraNode::GetViewProjection()
+{
+  m_Projection = Perspective(glm::radians(45.0f), 1280.0f, 720.0f, 0.01f, 100.0f);
+  m_View = LookAt(Position, (Position + m_Orientation), Vector3(0.0f, 1.0f, 0.0f));
+  
+  return m_Projection * m_View; 
 }
 
 #pragma GCC diagnostic pop

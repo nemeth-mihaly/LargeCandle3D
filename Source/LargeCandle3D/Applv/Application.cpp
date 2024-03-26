@@ -1,19 +1,30 @@
-#include "LargeCandle3D/Applv/Application.h"
+#include "LargeCandle3D/Applv/Application.hpp"
 
 #include <iostream>
 #include <fstream>
+#include "LargeCandle3D/Graphics/DebugOutput.hpp"
+#include "Vendor/stb/stb_image.h"
+#include "Vendor/imgui/imgui.h"
+#include "Vendor/imgui/backends/imgui_impl_glfw.h"
+#include "Vendor/imgui/backends/imgui_impl_opengl3.h"
 
-#include "LargeCandle3D/Graphics/glDebugOutput.h"
+/*-------------------------------------------------------------------------
+ *  Application.cpp
+ *-----------------------------------------------------------------------*/
 
-#include "LargeCandle3D/Vendor/stb/stb_image.h"
-
-#include "LargeCandle3D/Vendor/imgui/imgui.h"
-#include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_glfw.h"
-#include "LargeCandle3D/Vendor/imgui/backends/imgui_impl_opengl3.h"
-
+/*
+ *  g_pApp
+ */
 Application* g_pApp = NULL;
+
+/*
+ *  g_pShader
+ */
 Shader* g_pShader = NULL;
 
+/*
+ *  ReadFile
+ */
 static char* ReadFile(const char* pName)
 {
   FILE* fp = fopen(pName, "rb");
@@ -49,6 +60,9 @@ static char* ReadFile(const char* pName)
   return data;
 }
 
+/*
+ *  LoadGlslResource
+ */
 static bool LoadGlslResource(Shader*& shader, const char* pVertName, const char* pFragName)
 {
   char* vertShaderSource = ReadFile(pVertName);
@@ -72,10 +86,13 @@ static bool LoadGlslResource(Shader*& shader, const char* pVertName, const char*
   return true;
 }
 
+/*
+ *  LoadTextureResource
+ */
 static bool LoadTextureResource(std::shared_ptr<Texture>& pTexture, const char* pFileName)
 {
-  i32 width, height, numChannels;
-  u8* pPixels = stbi_load(pFileName, &width, &height, &numChannels, 0);
+  int width, height, numChannels;
+  uint8_t* pPixels = stbi_load(pFileName, &width, &height, &numChannels, 0);
 
   if (!pPixels)
   {
@@ -97,7 +114,10 @@ static bool LoadTextureResource(std::shared_ptr<Texture>& pTexture, const char* 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-static void GlfwKeyCallback(GLFWwindow* pWindow, i32 key, i32 scancode, i32 action, i32 mods)
+/*
+ *  GlfwKeyCallback
+ */
+static void GlfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
@@ -122,7 +142,10 @@ static void GlfwKeyCallback(GLFWwindow* pWindow, i32 key, i32 scancode, i32 acti
   }
 }
 
-static void GlfwMouseMoveCallback(GLFWwindow *pWindow, f64 x, f64 y)
+/*
+ *  GlfwMouseMoveCallback
+ */
+static void GlfwMouseMoveCallback(GLFWwindow *pWindow, double x, double y)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
@@ -131,10 +154,13 @@ static void GlfwMouseMoveCallback(GLFWwindow *pWindow, f64 x, f64 y)
     return;
   }
 
-  pApp->m_pView->OnMouseMove(static_cast<f32>(x), static_cast<f32>(y));
+  pApp->m_pView->OnMouseMove(static_cast<float>(x), static_cast<float>(y));
 }
 
-static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 button, i32 action, i32 mods)
+/*
+ *  GlfwMouseButtonCallback
+ */
+static void GlfwMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods)
 {
   Application* pApp = static_cast<Application*>(glfwGetWindowUserPointer(pWindow));
 
@@ -155,6 +181,10 @@ static void GlfwMouseButtonCallback(GLFWwindow* pWindow, i32 button, i32 action,
 }
 
 #pragma GCC diagnostic pop
+
+/*
+ *  Impl. of Application
+ */
 
 Application::Application()
 {
@@ -203,7 +233,7 @@ bool Application::Initialize(int scrWidth, int scrHeight, const char* title)
     return false;
   }
 
-//  i32 flags; 
+//  int flags; 
 //  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 //
 //  if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
@@ -310,12 +340,12 @@ void Application::Shutdown()
 
 void Application::Run()
 {
-  f32 previousTime = static_cast<f32>(glfwGetTime());
+  float previousTime = static_cast<float>(glfwGetTime());
 
   while (!glfwWindowShouldClose(m_pWindow))
   {
-    f32 currentTime = static_cast<f32>(glfwGetTime());
-    f32 deltaTime = currentTime - previousTime;
+    float currentTime = static_cast<float>(glfwGetTime());
+    float deltaTime = currentTime - previousTime;
     previousTime = currentTime;
 
     if (deltaTime > 0.05f)
@@ -332,13 +362,13 @@ void Application::Run()
 
 Vector2 Application::GetMousePos()
 {
-  f64 x, y;
+  double x, y;
   glfwGetCursorPos(m_pWindow, &x, &y);
   
-  return Vector2(static_cast<f32>(x), static_cast<f32>(y));
+  return Vector2(static_cast<float>(x), static_cast<float>(y));
 }
 
-void Application::Update(f32 deltaTime)
+void Application::Update(float deltaTime)
 {
   m_pView->OnUpdate(deltaTime);
 }

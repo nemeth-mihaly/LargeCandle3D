@@ -1,5 +1,12 @@
-#include "LargeCandle3D/Graphics/Mesh.h"
+#include "LargeCandle3D/Graphics/Mesh.hpp"
 
+/*-------------------------------------------------------------------------
+ *  Mesh.cpp
+ *-----------------------------------------------------------------------*/
+
+/*
+ *  g_PlaneVertices
+ */
 std::vector<Vertex3D> g_PlaneVertices =
 {
   {{ 0.5f,  0.0f,  0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
@@ -10,6 +17,9 @@ std::vector<Vertex3D> g_PlaneVertices =
   {{ 0.5f,  0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
 };
 
+/*
+ *  g_CubeVertices
+ */
 std::vector<Vertex3D> g_CubeVertices =
 {
   {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, { 0.0f,  0.0f}},
@@ -55,6 +65,10 @@ std::vector<Vertex3D> g_CubeVertices =
   {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, { 0.0f,  1.0f}}
 };
 
+/*
+ *  Impl. of Mesh
+ */
+
 Mesh::Mesh(const std::vector<Vertex3D>& vertices)
   : m_Vertices(vertices)
 {
@@ -81,7 +95,7 @@ Mesh::Mesh(const std::vector<Vertex3D>& vertices)
 }
 
 Mesh::Mesh(const std::vector<Vertex3D>& vertices, 
-  const std::vector<u32>& indices)
+  const std::vector<uint32_t>& indices)
     : m_Vertices(vertices), m_Indices(indices)
 {
   m_bIsBufferTypeIndex = true;
@@ -90,7 +104,7 @@ Mesh::Mesh(const std::vector<Vertex3D>& vertices,
   glNamedBufferData(m_VBO, sizeof(Vertex3D) * m_Vertices.size(), m_Vertices.data(), GL_STATIC_DRAW);
 
   glCreateBuffers(1, &m_IBO);
-  glNamedBufferData(m_IBO, sizeof(u32) * m_Indices.size(), m_Indices.data(), GL_STATIC_DRAW);
+  glNamedBufferData(m_IBO, sizeof(uint32_t) * m_Indices.size(), m_Indices.data(), GL_STATIC_DRAW);
 
   glCreateVertexArrays(1, &m_VAO);
 
@@ -124,9 +138,11 @@ void Mesh::OnRender() const
   glBindVertexArray(m_VAO);
  
   if (!m_bIsBufferTypeIndex)
+  {
     glDrawArrays(GL_TRIANGLES, 0, m_Vertices.size());
+  }
   else
   {
-    glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, NULL);
   }
 }
